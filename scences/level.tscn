@@ -3,7 +3,13 @@
 [ext_resource type="Script" uid="uid://cr1pdrt4vamyh" path="res://scripts/top.gd" id="1_dckfn"]
 [ext_resource type="Texture2D" uid="uid://ch8qa1kx5775f" path="res://assets/CustomUVChecker_byValle_1K.png" id="2_qi052"]
 
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_qi052"]
+albedo_color = Color(4.8796525, 2.8984103, 0.69946414, 1)
+metallic = 1.0
+metallic_specular = 0.27
+
 [sub_resource type="BoxMesh" id="BoxMesh_7l045"]
+material = SubResource("StandardMaterial3D_qi052")
 
 [sub_resource type="SphereShape3D" id="SphereShape3D_pg4a6"]
 
@@ -16,12 +22,14 @@ material = SubResource("StandardMaterial3D_dckfn")
 [node name="level" type="Node3D" unique_id=738747087]
 
 [node name="Top" type="CharacterBody3D" parent="." unique_id=1907083630]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 200.32025, 0)
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 120.80496, 0)
 script = ExtResource("1_dckfn")
 planet_path = NodePath("../Planet")
 camera_path = NodePath("../Camera3D")
 light_path = NodePath("DirectionalLight3D")
 radius = 10.0
+camera_distance = 20.0
+camera_pitch_deg = 89.0
 
 [node name="DirectionalLight3D" type="DirectionalLight3D" parent="Top" unique_id=1564292907]
 transform = Transform3D(0.7071068, 0.35355324, -0.6123725, 0, 0.86602557, 0.49999976, 0.7071068, -0.35355324, 0.6123725, 0, 13.953394, 0)

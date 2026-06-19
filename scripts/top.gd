@@ -7,6 +7,8 @@ extends CharacterBody3D
 @export var move_speed: float = 4.0          # units/sec along the surface (also caps mouse-drag speed)
 @export var turn_speed: float = 1.5          # radians/sec (keyboard turning)
 @export var drag_strength: float = 8.0       # mouse-drag: how hard the top is pulled to the cursor (higher = snappier)
+@export var accel_speed: float = 12.0        # how quickly the top ramps up to drag speed (higher = snappier)
+@export var friction: float = 2.0            # how quickly it coasts to a stop when you let go (lower = longer glide)
 @export var spin_visual_speed: float = 1080.0 # deg/sec, purely cosmetic
 @export var camera_distance: float = 10.0    # how far the camera sits from the top
 @export_range(10.0, 89.0) var camera_pitch_deg: float = 60.0 # 89 = straight overhead, lower = more behind-and-above
@@ -14,6 +16,7 @@ extends CharacterBody3D
 var planet_center: Vector3
 var planet_radius: float = 0.0               # planet's surface radius, used for cursor raycasts
 var heading: Vector3 = Vector3.FORWARD       # tangent direction the top faces
+var surface_vel: Vector3 = Vector3.ZERO      # current velocity as a tangent vector (units/sec along surface)
 var view_dir: Vector3 = Vector3.FORWARD      # camera's stable "behind" direction; parallel-transported as
 											 # the top moves so the view doesn't spin when you change heading
 
@@ -42,40 +45,44 @@ func _ready() -> void:
 func _physics_process(delta: float) -> void:
 	var up := (global_position - planet_center).normalized()
 
-	# --- drag: hold the left mouse button to pull the top toward the cursor ---
-	var fwd := 0.0
+	# keep the carried momentum tangent to the surface as the top travels
+	surface_vel -= up * surface_vel.dot(up)
+
+	# --- decide the velocity we want this frame from input ---
+	var target_vel := Vector3.ZERO
 	if Input.is_mouse_button_pressed(MOUSE_BUTTON_LEFT):
 		var target = _cursor_planet_point()
 		if target != null:
 			var point: Vector3 = target
-			var cur_dir := (global_position - planet_center).normalized()
 			var to_dir := (point - planet_center).normalized()
-			var arc := cur_dir.angle_to(to_dir)   # great-circle distance to the cursor, in radians
-			var axis := cur_dir.cross(to_dir)
-			if arc > 0.0001 and axis.length() > 0.0:
-				# move a slice of the remaining distance each frame, so the top eases in like an
-				# elastic drag; clamp to move_speed so a far flick of the cursor can't teleport it
-				var step: float = min(arc * clampf(drag_strength * delta, 0.0, 1.0), (move_speed * delta) / radius)
-				cur_dir = cur_dir.rotated(axis.normalized(), step)
-				global_position = planet_center + cur_dir * radius
-				up = cur_dir
-				var h := _project_tangent(to_dir, up)   # face the way we're being dragged
-				if h.length() > 0.001:
-					heading = h
+			var cos_a := clampf(up.dot(to_dir), -1.0, 1.0)
+			var dist := acos(cos_a) * radius          # surface distance to the cursor
+			var dir := to_dir - up * cos_a            # tangent pointing toward the cursor
+			if dir.length() > 0.0001:
+				# speed scales with distance (eases off as the cursor nears the top), capped
+				target_vel = dir.normalized() * min(dist * drag_strength, move_speed)
 	else:
 		# keyboard fallback when not dragging
 		var turn := Input.get_axis("move_right", "move_left")
 		heading = _project_tangent(heading.rotated(up, turn * turn_speed * delta), up)
-		fwd = Input.get_axis("move_back", "move_forward")
+		var fwd := Input.get_axis("move_back", "move_forward")
+		if fwd != 0.0:
+			target_vel = heading * (fwd * move_speed)
 
-	# --- keyboard move: rotate the position vector around the planet center ---
-	if fwd != 0.0:
-		var axis := up.cross(heading).normalized()
-		var angle := (fwd * move_speed * delta) / radius
-		var p := (global_position - planet_center).rotated(axis, angle)
+	# --- ease velocity toward the target: accelerate while driven, coast when released ---
+	var rate := accel_speed if target_vel.length() > 0.01 else friction
+	surface_vel = surface_vel.lerp(target_vel, clampf(rate * delta, 0.0, 1.0))
+
+	# --- move along the surface by the current velocity, carrying the velocity with us ---
+	var speed := surface_vel.length()
+	if speed > 0.001:
+		var move_axis := up.cross(surface_vel).normalized()
+		var angle := (speed * delta) / radius
+		var p := (global_position - planet_center).rotated(move_axis, angle)
 		global_position = planet_center + p.normalized() * radius
 		up = (global_position - planet_center).normalized()
-		heading = _project_tangent(heading, up)
+		surface_vel = surface_vel.rotated(move_axis, angle)   # parallel-transport along the path
+		heading = surface_vel.normalized()
 
 	# --- orient the top: local up = surface normal, local -Z = heading ---
 	global_transform.basis = Basis.looking_at(heading, up)

@@ -25,11 +25,17 @@ material = SubResource("StandardMaterial3D_dckfn")
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 120.80496, 0)
 script = ExtResource("1_dckfn")
 planet_path = NodePath("../Planet")
-camera_path = NodePath("../Camera3D")
+camera_path = NodePath("Camera3D")
 light_path = NodePath("DirectionalLight3D")
 radius = 10.0
+move_speed = 10.0
+accel_speed = 20.0
+friction = 1.0
 camera_distance = 20.0
 camera_pitch_deg = 89.0
+
+[node name="Camera3D" type="Camera3D" parent="Top" unique_id=1564292906]
+transform = Transform3D(1, 0, 0, 0, 0.894427, 0.447214, 0, -0.447214, 0.894427, 0, -105.80496, 30)
 
 [node name="DirectionalLight3D" type="DirectionalLight3D" parent="Top" unique_id=1564292907]
 transform = Transform3D(0.7071068, 0.35355324, -0.6123725, 0, 0.86602557, 0.49999976, 0.7071068, -0.35355324, 0.6123725, 0, 13.953394, 0)
@@ -43,6 +49,3 @@ shape = SubResource("SphereShape3D_pg4a6")
 [node name="Planet" type="MeshInstance3D" parent="." unique_id=1564292905]
 transform = Transform3D(100, 0, 0, 0, 100, 0, 0, 0, 100, 0, 0, 0)
 mesh = SubResource("SphereMesh_0k001")
-
-[node name="Camera3D" type="Camera3D" parent="." unique_id=1564292906]
-transform = Transform3D(1, 0, 0, 0, 0.894427, 0.447214, 0, -0.447214, 0.894427, 0, 15, 30)

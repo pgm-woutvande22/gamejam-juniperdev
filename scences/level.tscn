@@ -2,9 +2,10 @@
 
 [ext_resource type="Script" uid="uid://cr1pdrt4vamyh" path="res://scripts/top.gd" id="1_dckfn"]
 [ext_resource type="Texture2D" uid="uid://ch8qa1kx5775f" path="res://assets/CustomUVChecker_byValle_1K.png" id="2_qi052"]
+[ext_resource type="Texture2D" uid="uid://bwldoqvfdpq56" path="res://assets/testy.png" id="3_tas22"]
 
 [sub_resource type="StandardMaterial3D" id="StandardMaterial3D_qi052"]
-albedo_color = Color(4.8796525, 2.8984103, 0.69946414, 1)
+albedo_color = Color(0.99133664, 0.5754524, 0.372871, 1)
 metallic = 1.0
 metallic_specular = 0.27
 
@@ -13,8 +14,11 @@ material = SubResource("StandardMaterial3D_qi052")
 
 [sub_resource type="SphereShape3D" id="SphereShape3D_pg4a6"]
 
-[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_dckfn"]
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_7l045"]
 albedo_texture = ExtResource("2_qi052")
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_dckfn"]
+albedo_texture = ExtResource("3_tas22")
 
 [sub_resource type="SphereMesh" id="SphereMesh_0k001"]
 material = SubResource("StandardMaterial3D_dckfn")
@@ -28,19 +32,22 @@ planet_path = NodePath("../Planet")
 camera_path = NodePath("Camera3D")
 light_path = NodePath("DirectionalLight3D")
 radius = 10.0
-move_speed = 10.0
+move_speed = 50.0
+turn_speed = 0.5
+drag_strength = 15.0
 accel_speed = 20.0
 friction = 1.0
-camera_distance = 20.0
+camera_distance = 35.0
 camera_pitch_deg = 89.0
 
 [node name="Camera3D" type="Camera3D" parent="Top" unique_id=1564292906]
-transform = Transform3D(1, 0, 0, 0, 0.894427, 0.447214, 0, -0.447214, 0.894427, 0, -105.80496, 30)
+transform = Transform3D(1, 0, 0, 0, 0.894427, 0.447214, 0, -0.447214, 0.894427, 0, -121.40506, 134.60197)
 
 [node name="DirectionalLight3D" type="DirectionalLight3D" parent="Top" unique_id=1564292907]
 transform = Transform3D(0.7071068, 0.35355324, -0.6123725, 0, 0.86602557, 0.49999976, 0.7071068, -0.35355324, 0.6123725, 0, 13.953394, 0)
 
 [node name="TopMesh" type="MeshInstance3D" parent="Top" unique_id=2067627049]
+transform = Transform3D(2, 0, 0, 0, 2, 0, 0, 0, 2, 0, 0, 0)
 mesh = SubResource("BoxMesh_7l045")
 
 [node name="CollisionShape3D" type="CollisionShape3D" parent="Top" unique_id=1850111559]
@@ -48,4 +55,5 @@ shape = SubResource("SphereShape3D_pg4a6")
 
 [node name="Planet" type="MeshInstance3D" parent="." unique_id=1564292905]
 transform = Transform3D(100, 0, 0, 0, 100, 0, 0, 0, 100, 0, 0, 0)
+material_override = SubResource("StandardMaterial3D_7l045")
 mesh = SubResource("SphereMesh_0k001")

@@ -4,10 +4,10 @@ extends CharacterBody3D
 @export var camera_path: NodePath            # the Camera3D that follows the top
 @export var light_path: NodePath             # the DirectionalLight3D that follows the top
 @export var radius: float = 5.0
-@export var move_speed: float = 4.0          # units/sec along the surface (also caps mouse-drag speed)
+@export var move_speed: float = 4.0          # top speed in units/sec along the surface
 @export var turn_speed: float = 1.5          # radians/sec (keyboard turning)
-@export var drag_strength: float = 8.0       # mouse-drag: how hard the top is pulled to the cursor (higher = snappier)
-@export var accel_speed: float = 12.0        # how quickly the top ramps up to drag speed (higher = snappier)
+@export var full_speed_distance: float = 6.0 # cursor distance (surface units) at which you hit top speed; closer = slower
+@export var accel_speed: float = 8.0         # acceleration (units/sec^2): caps how fast speed AND direction can change; lower = more elastic
 @export var friction: float = 2.0            # how quickly it coasts to a stop when you let go (lower = longer glide)
 @export var spin_visual_speed: float = 1080.0 # deg/sec, purely cosmetic
 @export var camera_distance: float = 10.0    # how far the camera sits from the top
@@ -59,8 +59,9 @@ func _physics_process(delta: float) -> void:
 			var dist := acos(cos_a) * radius          # surface distance to the cursor
 			var dir := to_dir - up * cos_a            # tangent pointing toward the cursor
 			if dir.length() > 0.0001:
-				# speed scales with distance (eases off as the cursor nears the top), capped
-				target_vel = dir.normalized() * min(dist * drag_strength, move_speed)
+				# speed ramps linearly from 0 (cursor on the top) to move_speed at full_speed_distance
+				var t := clampf(dist / maxf(full_speed_distance, 0.001), 0.0, 1.0)
+				target_vel = dir.normalized() * (move_speed * t)
 	else:
 		# keyboard fallback when not dragging
 		var turn := Input.get_axis("move_right", "move_left")
@@ -69,9 +70,18 @@ func _physics_process(delta: float) -> void:
 		if fwd != 0.0:
 			target_vel = heading * (fwd * move_speed)
 
-	# --- ease velocity toward the target: accelerate while driven, coast when released ---
-	var rate := accel_speed if target_vel.length() > 0.01 else friction
-	surface_vel = surface_vel.lerp(target_vel, clampf(rate * delta, 0.0, 1.0))
+	# --- ease velocity toward the target at a capped rate, so the top can't change speed OR
+	#     direction instantly: it must decelerate out of its current heading and accelerate into
+	#     the new one, giving an elastic turn. coast to a stop with friction when released ---
+	if target_vel.length() > 0.01:
+		var dv := target_vel - surface_vel
+		var max_step := accel_speed * delta
+		if dv.length() > max_step:
+			surface_vel += dv * (max_step / dv.length())
+		else:
+			surface_vel = target_vel
+	else:
+		surface_vel = surface_vel.lerp(Vector3.ZERO, clampf(friction * delta, 0.0, 1.0))
 
 	# --- move along the surface by the current velocity, carrying the velocity with us ---
 	var speed := surface_vel.length()

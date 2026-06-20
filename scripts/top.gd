@@ -15,6 +15,7 @@ extends CharacterBody3D
 @export var dash_cooldown: float = 0.6       # min time between dashes
 @export var dash_particles_path: NodePath    # optional GPUParticles3D trail dropped behind the top while dashing
 @export var dash_colors: Array[Color] = []   # palette tinted into the trail per dash; empty = random hue
+@export var dash_indicator_path: NodePath    # optional flat ring (PlaneMesh + dash_indicator.gdshader) showing cooldown
 @export var camera_distance: float = 10.0    # how far the camera sits from the top
 @export_range(10.0, 89.0) var camera_pitch_deg: float = 60.0 # 89 = straight overhead, lower = more behind-and-above
 
@@ -34,6 +35,7 @@ var prev_rmb: bool = false                   # last frame's right-mouse state, f
 @onready var camera: Camera3D = get_node_or_null(camera_path)
 @onready var light: DirectionalLight3D = get_node_or_null(light_path)
 @onready var dash_particles: GPUParticles3D = get_node_or_null(dash_particles_path)
+@onready var dash_indicator: MeshInstance3D = get_node_or_null(dash_indicator_path)
 
 func _ready() -> void:
 	var planet := get_node(planet_path)
@@ -62,6 +64,7 @@ func _physics_process(delta: float) -> void:
 
 	if dash_cooldown_left > 0.0:
 		dash_cooldown_left -= delta
+	_update_dash_indicator()
 
 	# --- right click: start a dash toward the cursor (quick burst, not affected by friction/accel) ---
 	var rmb := Input.is_mouse_button_pressed(MOUSE_BUTTON_RIGHT)
@@ -144,6 +147,18 @@ func _physics_process(delta: float) -> void:
 
 	_update_camera(up)   # follow the top every frame, recentering immediately (no lag = no spiral)
 	_update_light(up)
+
+func _update_dash_indicator() -> void:
+	# fill the ring as the cooldown recharges: 0 right after a dash, 1.0 when ready again
+	if dash_indicator == null:
+		return
+	var mat := dash_indicator.get_active_material(0) as ShaderMaterial
+	if mat == null:
+		return
+	var p := 1.0
+	if dash_cooldown > 0.0:
+		p = clampf(1.0 - dash_cooldown_left / dash_cooldown, 0.0, 1.0)
+	mat.set_shader_parameter("progress", p)
 
 func _setup_dash_colors() -> void:
 	# build a Color Initial Ramp so EACH particle samples a random color from the palette,

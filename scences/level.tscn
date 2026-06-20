@@ -1,6 +1,7 @@
 [gd_scene format=3 uid="uid://bijewbw3cmiha"]
 
 [ext_resource type="Script" uid="uid://cr1pdrt4vamyh" path="res://scripts/top.gd" id="1_dckfn"]
+[ext_resource type="Shader" uid="uid://c7yhsbhudabf" path="res://shaders/dash_indicator.gdshader" id="2_7l045"]
 [ext_resource type="Texture2D" uid="uid://ch8qa1kx5775f" path="res://assets/CustomUVChecker_byValle_1K.png" id="2_qi052"]
 [ext_resource type="Texture2D" uid="uid://bwldoqvfdpq56" path="res://assets/testy.png" id="3_tas22"]
 
@@ -39,6 +40,20 @@ billboard_mode = 1
 material = SubResource("StandardMaterial3D_7l045")
 size = Vector2(0.2, 0.2)
 
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_mjhmi"]
+render_priority = 0
+shader = ExtResource("2_7l045")
+shader_parameter/progress = 0.0
+shader_parameter/fill_color = Color(0.50329643, 0.99488574, 0.39735007, 1)
+shader_parameter/empty_color = Color(1, 1, 1, 0.12)
+shader_parameter/ready_color = Color(0.060299985, 0.67, 0.2330483, 1)
+shader_parameter/inner_radius = 0.78
+shader_parameter/outer_radius = 0.96
+shader_parameter/edge_softness = 0.02
+
+[sub_resource type="QuadMesh" id="QuadMesh_pg4a6"]
+material = SubResource("ShaderMaterial_mjhmi")
+
 [sub_resource type="StandardMaterial3D" id="StandardMaterial3D_cq5gf"]
 albedo_texture = ExtResource("2_qi052")
 
@@ -62,8 +77,10 @@ turn_speed = 20.0
 accel_speed = 20.0
 friction = 1.0
 dash_distance = 10.0
+dash_cooldown = 2.0
 dash_particles_path = NodePath("DashParticles")
 dash_colors = Array[Color]([Color(1, 1, 1, 1), Color(1, 0, 0, 1), Color(0.9801654, 0.05025994, 0.3236682, 1), Color(0.9880797, 0.3052566, 0.040456824, 1)])
+dash_indicator_path = NodePath("DashIndicator")
 camera_distance = 35.0
 camera_pitch_deg = 89.0
 
@@ -88,6 +105,10 @@ one_shot = true
 trail_lifetime = 1.41
 process_material = SubResource("ParticleProcessMaterial_tas22")
 draw_pass_1 = SubResource("QuadMesh_tas22")
+
+[node name="DashIndicator" type="MeshInstance3D" parent="Top" unique_id=1332331279]
+transform = Transform3D(2, 0, 0, 0, -8.742278e-08, 2, 0, -2, -8.742278e-08, 0, 3.033493, 0)
+mesh = SubResource("QuadMesh_pg4a6")
 
 [node name="Planet" type="MeshInstance3D" parent="." unique_id=1564292905]
 transform = Transform3D(100, 0, 0, 0, 100, 0, 0, 0, 100, 0, 0, 0)

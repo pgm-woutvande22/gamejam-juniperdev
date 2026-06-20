@@ -4,6 +4,7 @@
 [ext_resource type="Shader" uid="uid://c7yhsbhudabf" path="res://shaders/dash_indicator.gdshader" id="2_7l045"]
 [ext_resource type="Texture2D" uid="uid://ch8qa1kx5775f" path="res://assets/CustomUVChecker_byValle_1K.png" id="2_qi052"]
 [ext_resource type="Texture2D" uid="uid://bwldoqvfdpq56" path="res://assets/testy.png" id="3_tas22"]
+[ext_resource type="PackedScene" uid="uid://dyihxt88e4143" path="res://scences/enemy.tscn" id="5_cq5gf"]
 
 [sub_resource type="StandardMaterial3D" id="StandardMaterial3D_qi052"]
 albedo_color = Color(18.892157, 18.892157, 18.892157, 1)
@@ -114,3 +115,6 @@ mesh = SubResource("QuadMesh_pg4a6")
 transform = Transform3D(100, 0, 0, 0, 100, 0, 0, 0, 100, 0, 0, 0)
 material_override = SubResource("StandardMaterial3D_cq5gf")
 mesh = SubResource("SphereMesh_0k001")
+
+[node name="Enemy" parent="." unique_id=1990566202 instance=ExtResource("5_cq5gf")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 144.296, 0, 0)

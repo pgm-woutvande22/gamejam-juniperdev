@@ -269,6 +269,30 @@ func _cursor_planet_point() -> Variant:
 		return null
 	return o + d * t
 
+func get_surface_speed() -> float:
+	# current speed along the surface (units/sec). during a dash, report the dash's true
+	# speed rather than the carried-out momentum, so dashing can hit an enemy's kill threshold.
+	if dash_time_left > 0.0:
+		return dash_angular_speed * radius
+	return surface_vel.length()
+
+func bounce_off(from_pos: Vector3) -> void:
+	# rebound away from a contact point (e.g. an enemy we hit too slowly to kill).
+	var up := (global_position - planet_center).normalized()
+	# contact normal in the tangent plane, pointing from the obstacle toward us
+	var normal := _project_tangent(global_position - from_pos, up)
+	if normal == Vector3.ZERO:
+		normal = -heading
+	dash_time_left = 0.0                       # cancel any active dash so the bounce isn't ignored
+	surface_vel = surface_vel.bounce(normal)   # reflect velocity off the contact
+	# guarantee a minimum outward push even if we were nearly stopped on impact
+	var min_push := move_speed * 0.5
+	var outward := surface_vel.dot(normal)
+	if outward < min_push:
+		surface_vel += normal * (min_push - outward)
+	if surface_vel.length() > 0.001:
+		heading = _project_tangent(surface_vel, up)
+
 func _project_tangent(v: Vector3, up: Vector3) -> Vector3:
 	# remove the component along 'up' so the vector stays on the tangent plane
 	return (v - up * v.dot(up)).normalized()

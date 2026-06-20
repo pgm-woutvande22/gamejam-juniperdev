@@ -10,6 +10,9 @@ extends CharacterBody3D
 @export var accel_speed: float = 8.0         # acceleration (units/sec^2): caps how fast speed AND direction can change; lower = more elastic
 @export var friction: float = 2.0            # how quickly it coasts to a stop when you let go (lower = longer glide)
 @export var spin_visual_speed: float = 1080.0 # deg/sec, purely cosmetic
+@export var dash_distance: float = 12.0      # max surface distance a single dash covers
+@export var dash_duration: float = 0.18      # how long the dash burst lasts (lower = snappier)
+@export var dash_cooldown: float = 0.6       # min time between dashes
 @export var camera_distance: float = 10.0    # how far the camera sits from the top
 @export_range(10.0, 89.0) var camera_pitch_deg: float = 60.0 # 89 = straight overhead, lower = more behind-and-above
 
@@ -19,6 +22,11 @@ var heading: Vector3 = Vector3.FORWARD       # tangent direction the top faces
 var surface_vel: Vector3 = Vector3.ZERO      # current velocity as a tangent vector (units/sec along surface)
 var view_dir: Vector3 = Vector3.FORWARD      # camera's stable "behind" direction; parallel-transported as
 											 # the top moves so the view doesn't spin when you change heading
+var dash_time_left: float = 0.0              # >0 while a dash is in progress
+var dash_cooldown_left: float = 0.0          # >0 while dash is recharging
+var dash_axis: Vector3 = Vector3.ZERO        # fixed great-circle axis the active dash rotates around
+var dash_angular_speed: float = 0.0          # radians/sec the active dash rotates the position vector
+var prev_rmb: bool = false                   # last frame's right-mouse state, for edge detection
 
 @onready var mesh: Node3D = $TopMesh
 @onready var camera: Camera3D = get_node_or_null(camera_path)
@@ -47,6 +55,32 @@ func _physics_process(delta: float) -> void:
 
 	# keep the carried momentum tangent to the surface as the top travels
 	surface_vel -= up * surface_vel.dot(up)
+
+	if dash_cooldown_left > 0.0:
+		dash_cooldown_left -= delta
+
+	# --- right click: start a dash toward the cursor (quick burst, not affected by friction/accel) ---
+	var rmb := Input.is_mouse_button_pressed(MOUSE_BUTTON_RIGHT)
+	if rmb and not prev_rmb and dash_time_left <= 0.0 and dash_cooldown_left <= 0.0:
+		_start_dash(up)
+	prev_rmb = rmb
+
+	# --- while dashing, override normal movement: rotate along the fixed great-circle axis ---
+	if dash_time_left > 0.0:
+		var step := minf(dash_time_left, delta)
+		dash_time_left -= delta
+		var angle := dash_angular_speed * step
+		var p := (global_position - planet_center).rotated(dash_axis, angle)
+		global_position = planet_center + p.normalized() * radius
+		up = (global_position - planet_center).normalized()
+		# carry momentum out of the dash so it eases back into normal movement
+		heading = _project_tangent(dash_axis.cross(up), up)
+		surface_vel = heading * move_speed
+		global_transform.basis = Basis.looking_at(heading, up)
+		mesh.rotate_object_local(Vector3.UP, deg_to_rad(spin_visual_speed) * delta)
+		_update_camera(up)
+		_update_light(up)
+		return
 
 	# --- decide the velocity we want this frame from input ---
 	var target_vel := Vector3.ZERO
@@ -102,6 +136,29 @@ func _physics_process(delta: float) -> void:
 
 	_update_camera(up)   # follow the top every frame, recentering immediately (no lag = no spiral)
 	_update_light(up)
+
+func _start_dash(up: Vector3) -> void:
+	# pick the tangent direction to dash in: toward the cursor if it's over the planet,
+	# otherwise straight ahead along the current heading
+	var dir := heading
+	var dist := dash_distance
+	var target = _cursor_planet_point()
+	if target != null:
+		var point: Vector3 = target
+		var to_dir := (point - planet_center).normalized()
+		var cos_a := clampf(up.dot(to_dir), -1.0, 1.0)
+		var to_tangent := to_dir - up * cos_a
+		if to_tangent.length() > 0.0001:
+			dir = to_tangent.normalized()
+			# don't overshoot the cursor; cap at dash_distance for far targets
+			dist = minf(acos(cos_a) * radius, dash_distance)
+	if dist <= 0.001:
+		return
+	dash_axis = up.cross(dir).normalized()
+	var total_angle := dist / radius
+	dash_angular_speed = total_angle / maxf(dash_duration, 0.001)
+	dash_time_left = dash_duration
+	dash_cooldown_left = dash_cooldown
 
 func _update_camera(up: Vector3) -> void:
 	# keep the top centered every frame, but recenter IMMEDIATELY (no smoothing). a lagging camera

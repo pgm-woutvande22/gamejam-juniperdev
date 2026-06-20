@@ -5,7 +5,7 @@
 [ext_resource type="Texture2D" uid="uid://bwldoqvfdpq56" path="res://assets/testy.png" id="3_tas22"]
 
 [sub_resource type="StandardMaterial3D" id="StandardMaterial3D_qi052"]
-albedo_color = Color(0.99133664, 0.5754524, 0.372871, 1)
+albedo_color = Color(18.892157, 18.892157, 18.892157, 1)
 metallic = 1.0
 metallic_specular = 0.27
 
@@ -32,9 +32,8 @@ planet_path = NodePath("../Planet")
 camera_path = NodePath("Camera3D")
 light_path = NodePath("DirectionalLight3D")
 radius = 10.0
-move_speed = 50.0
-turn_speed = 0.5
-drag_strength = 15.0
+move_speed = 30.0
+turn_speed = 20.0
 accel_speed = 20.0
 friction = 1.0
 camera_distance = 35.0

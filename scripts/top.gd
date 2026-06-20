@@ -12,7 +12,10 @@ extends CharacterBody3D
 @export var spin_visual_speed: float = 1080.0 # deg/sec, purely cosmetic
 @export var dash_distance: float = 12.0      # max surface distance a single dash covers
 @export var dash_duration: float = 0.18      # how long the dash burst lasts (lower = snappier)
-@export var dash_cooldown: float = 0.6       # min time between dashes
+@export var dash_cooldown: float = 0.6       # min time between dashes/jumps (shared)
+@export var jump_height: float = 3.0         # peak height above the surface during a jump
+@export var jump_duration: float = 0.45      # time for the full up-and-down jump arc
+@export var jump_particles_path: NodePath    # optional GPUParticles3D (one_shot) dust ring on takeoff
 @export var dash_particles_path: NodePath    # optional GPUParticles3D trail dropped behind the top while dashing
 @export var dash_colors: Array[Color] = []   # palette tinted into the trail per dash; empty = random hue
 @export var dash_indicator_path: NodePath    # optional flat ring (PlaneMesh + dash_indicator.gdshader) showing cooldown
@@ -30,12 +33,15 @@ var dash_cooldown_left: float = 0.0          # >0 while dash is recharging
 var dash_axis: Vector3 = Vector3.ZERO        # fixed great-circle axis the active dash rotates around
 var dash_angular_speed: float = 0.0          # radians/sec the active dash rotates the position vector
 var prev_rmb: bool = false                   # last frame's right-mouse state, for edge detection
+var jump_time_left: float = 0.0              # >0 while a jump arc is in progress
+var prev_jump: bool = false                  # last frame's jump-key state, for edge detection
 
 @onready var mesh: Node3D = $TopMesh
 @onready var camera: Camera3D = get_node_or_null(camera_path)
 @onready var light: DirectionalLight3D = get_node_or_null(light_path)
 @onready var dash_particles: GPUParticles3D = get_node_or_null(dash_particles_path)
 @onready var dash_indicator: MeshInstance3D = get_node_or_null(dash_indicator_path)
+@onready var jump_particles: GPUParticles3D = get_node_or_null(jump_particles_path)
 
 func _ready() -> void:
 	var planet := get_node(planet_path)
@@ -64,6 +70,8 @@ func _physics_process(delta: float) -> void:
 
 	if dash_cooldown_left > 0.0:
 		dash_cooldown_left -= delta
+	if jump_time_left > 0.0:
+		jump_time_left -= delta
 	_update_dash_indicator()
 
 	# --- right click: start a dash toward the cursor (quick burst, not affected by friction/accel) ---
@@ -71,6 +79,15 @@ func _physics_process(delta: float) -> void:
 	if rmb and not prev_rmb and dash_time_left <= 0.0 and dash_cooldown_left <= 0.0:
 		_start_dash(up)
 	prev_rmb = rmb
+
+	# --- jump: hop off the surface in a radial arc; shares the dash cooldown ---
+	var jump := _jump_pressed()
+	if jump and not prev_jump and dash_time_left <= 0.0 and jump_time_left <= 0.0 and dash_cooldown_left <= 0.0:
+		jump_time_left = jump_duration
+		dash_cooldown_left = dash_cooldown
+		if jump_particles != null:
+			jump_particles.restart()   # one-shot dust ring kicks off at takeoff
+	prev_jump = jump
 
 	# --- while dashing, override normal movement: rotate along the fixed great-circle axis ---
 	if dash_time_left > 0.0:
@@ -145,8 +162,25 @@ func _physics_process(delta: float) -> void:
 	# --- trail is dash-only (see the dash branch above); keep it off during normal movement ---
 	_set_trail(false)
 
+	# --- jump: lift the top off the surface along the normal by a parabolic arc. set absolutely
+	#     (not added) so it can't accumulate and lands exactly back on the surface when done ---
+	global_position = planet_center + up * (radius + _jump_offset())
+
 	_update_camera(up)   # follow the top every frame, recentering immediately (no lag = no spiral)
 	_update_light(up)
+
+func _jump_offset() -> float:
+	# height above the surface for the current frame of the jump: a smooth 0 -> peak -> 0 arc
+	if jump_time_left <= 0.0:
+		return 0.0
+	var t := clampf(1.0 - jump_time_left / maxf(jump_duration, 0.001), 0.0, 1.0)
+	return jump_height * sin(PI * t)
+
+func _jump_pressed() -> bool:
+	# use a "jump" input action if the project defines one, else fall back to the spacebar
+	if InputMap.has_action("jump"):
+		return Input.is_action_pressed("jump")
+	return Input.is_key_pressed(KEY_SPACE)
 
 func _update_dash_indicator() -> void:
 	# fill the ring as the cooldown recharges: 0 right after a dash, 1.0 when ready again

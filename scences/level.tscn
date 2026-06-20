@@ -54,6 +54,44 @@ shader_parameter/edge_softness = 0.02
 [sub_resource type="QuadMesh" id="QuadMesh_pg4a6"]
 material = SubResource("ShaderMaterial_mjhmi")
 
+[sub_resource type="Gradient" id="Gradient_7l045"]
+colors = PackedColorArray(0.48766226, 0.48766214, 0.48766208, 1, 0.52, 0.52, 0.52, 0)
+
+[sub_resource type="GradientTexture1D" id="GradientTexture1D_cq5gf"]
+gradient = SubResource("Gradient_7l045")
+
+[sub_resource type="Curve" id="Curve_7l045"]
+_data = [Vector2(0.016778529, 0), 0.0, 0.0, 0, 0, Vector2(1, 1), 0.0, 0.0, 0, 0]
+point_count = 2
+
+[sub_resource type="CurveTexture" id="CurveTexture_pg4a6"]
+curve = SubResource("Curve_7l045")
+
+[sub_resource type="ParticleProcessMaterial" id="ParticleProcessMaterial_x8160"]
+emission_shape = 6
+emission_ring_axis = Vector3(0, 1, 0)
+emission_ring_height = 0.05
+emission_ring_radius = 2.0
+emission_ring_inner_radius = 0.2
+emission_ring_cone_angle = 90.0
+inherit_velocity_ratio = 6.0
+direction = Vector3(0, 1, 0)
+spread = 90.0
+gravity = Vector3(0, -1, 0)
+damping_min = 2.0
+damping_max = 4.0
+scale_curve = SubResource("CurveTexture_pg4a6")
+color_ramp = SubResource("GradientTexture1D_cq5gf")
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_2mwew"]
+transparency = 1
+albedo_color = Color(0.43, 0.3698, 0.3698, 1)
+billboard_mode = 1
+
+[sub_resource type="QuadMesh" id="QuadMesh_3irxl"]
+material = SubResource("StandardMaterial3D_2mwew")
+size = Vector2(0.15, 0.15)
+
 [sub_resource type="StandardMaterial3D" id="StandardMaterial3D_cq5gf"]
 albedo_texture = ExtResource("2_qi052")
 
@@ -76,8 +114,12 @@ move_speed = 30.0
 turn_speed = 20.0
 accel_speed = 20.0
 friction = 1.0
-dash_distance = 10.0
+dash_distance = 2.0
+dash_duration = 0.2
 dash_cooldown = 2.0
+jump_height = 20.0
+jump_duration = 10.0
+jump_particles_path = NodePath("JumpDust")
 dash_particles_path = NodePath("DashParticles")
 dash_colors = Array[Color]([Color(1, 1, 1, 1), Color(1, 0, 0, 1), Color(0.9801654, 0.05025994, 0.3236682, 1), Color(0.9880797, 0.3052566, 0.040456824, 1)])
 dash_indicator_path = NodePath("DashIndicator")
@@ -109,6 +151,16 @@ draw_pass_1 = SubResource("QuadMesh_tas22")
 [node name="DashIndicator" type="MeshInstance3D" parent="Top" unique_id=1332331279]
 transform = Transform3D(2, 0, 0, 0, -8.742278e-08, 2, 0, -2, -8.742278e-08, 0, 3.033493, 0)
 mesh = SubResource("QuadMesh_pg4a6")
+
+[node name="JumpDust" type="GPUParticles3D" parent="Top" unique_id=2099577055]
+emitting = false
+amount = 40
+lifetime = 0.6
+one_shot = true
+explosiveness = 1.0
+trail_lifetime = 0.8
+process_material = SubResource("ParticleProcessMaterial_x8160")
+draw_pass_1 = SubResource("QuadMesh_3irxl")
 
 [node name="Planet" type="MeshInstance3D" parent="." unique_id=1564292905]
 transform = Transform3D(100, 0, 0, 0, 100, 0, 0, 0, 100, 0, 0, 0)

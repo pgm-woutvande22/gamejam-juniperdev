@@ -9,6 +9,8 @@ extends CharacterBody3D
 @export var full_speed_distance: float = 6.0 # cursor distance (surface units) at which you hit top speed; closer = slower
 @export var accel_speed: float = 8.0         # acceleration (units/sec^2): caps how fast speed AND direction can change; lower = more elastic
 @export var friction: float = 2.0            # how quickly it coasts to a stop when you let go (lower = longer glide)
+@export var bounce_strength: float = 2.5     # multiplier on the rebound velocity off an enemy (higher = more violent)
+@export var bounce_min_speed: float = 0.0    # guaranteed rebound speed (units/sec); 0 = use move_speed * 1.5
 @export var spin_visual_speed: float = 1080.0 # deg/sec, purely cosmetic
 @export var dash_distance: float = 12.0      # max surface distance a single dash covers
 @export var dash_duration: float = 0.18      # how long the dash burst lasts (lower = snappier)
@@ -284,9 +286,10 @@ func bounce_off(from_pos: Vector3) -> void:
 	if normal == Vector3.ZERO:
 		normal = -heading
 	dash_time_left = 0.0                       # cancel any active dash so the bounce isn't ignored
-	surface_vel = surface_vel.bounce(normal)   # reflect velocity off the contact
-	# guarantee a minimum outward push even if we were nearly stopped on impact
-	var min_push := move_speed * 0.5
+	# reflect velocity off the contact, then amplify it for a violent knockback
+	surface_vel = surface_vel.bounce(normal) * bounce_strength
+	# guarantee a strong outward push even if we were nearly stopped on impact
+	var min_push := bounce_min_speed if bounce_min_speed > 0.0 else move_speed * 1.5
 	var outward := surface_vel.dot(normal)
 	if outward < min_push:
 		surface_vel += normal * (min_push - outward)

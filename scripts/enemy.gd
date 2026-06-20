@@ -22,6 +22,8 @@ signal died(enemy: Node, score: int)   # emitted on death; connect in the level 
 @export var move_speed: float = 18.0
 @export var turn_speed: float = 4.0
 @export var chase_range: float = 60.0
+@export var separation_radius: float = 6.0
+@export var separation_strength: float = 1.5
 @export var kill_threshold: float = 45.0
 @export var max_health: float = 50.0
 @export var hit_distance: float = 4.0
@@ -58,6 +60,7 @@ func _ready() -> void:
 	heading = _project_tangent(heading, up)
 	health = max_health
 	_place_sprite()
+	add_to_group("enemies")   # so enemies can find each other for anti-clump separation
 
 func _physics_process(delta: float) -> void:
 	var up := (global_position - planet_center).normalized()
@@ -72,6 +75,7 @@ func _physics_process(delta: float) -> void:
 
 	# --- decide which tangent direction we want to face ---
 	var desired := heading
+	var chasing := false
 	if target != null:
 		var to_target := (target.global_position - planet_center).normalized()
 		var cos_a := clampf(up.dot(to_target), -1.0, 1.0)
@@ -80,8 +84,14 @@ func _physics_process(delta: float) -> void:
 			var tangent := to_target - up * cos_a        # direction toward the player along the surface
 			if tangent.length() > 0.0001:
 				desired = tangent.normalized()
-		else:
-			return                                        # out of range: idle this frame
+				chasing = true
+
+	# --- anti-clump: steer away from nearby enemies, blended in with the chase direction ---
+	var sep := _separation(up)
+	if sep.length() > 0.0001:
+		desired = (desired + sep.normalized() * separation_strength).normalized()
+	elif not chasing:
+		return                                            # nothing to chase and no crowding: idle
 
 	# --- ease the heading toward the desired direction at a capped turn rate ---
 	var angle_to := heading.angle_to(desired)
@@ -118,6 +128,8 @@ func _apply_type() -> void:
 	move_speed = type.move_speed
 	turn_speed = type.turn_speed
 	chase_range = type.chase_range
+	separation_radius = type.separation_radius
+	separation_strength = type.separation_strength
 	kill_threshold = type.kill_threshold
 	max_health = type.max_health
 	hit_distance = type.hit_distance
@@ -147,6 +159,20 @@ func _place_sprite() -> void:
 	if sprite.texture != null:
 		half_h = sprite.texture.get_height() * sprite.pixel_size * sprite.scale.y * 0.5
 	sprite.position = Vector3.UP * (half_h + surface_offset)
+
+func _separation(up: Vector3) -> Vector3:
+	# sum a push away from every other enemy within separation_radius, weighted by how close
+	# they are (closer = stronger), then flatten it onto the tangent plane. returns a raw
+	# (un-normalized) vector so the caller can normalize/weight it.
+	var push := Vector3.ZERO
+	for other in get_tree().get_nodes_in_group("enemies"):
+		if other == self or not is_instance_valid(other):
+			continue
+		var away: Vector3 = global_position - (other as Node3D).global_position
+		var d := away.length()
+		if d > 0.0001 and d < separation_radius:
+			push += away.normalized() * (1.0 - d / separation_radius)
+	return push - up * push.dot(up)   # project onto the tangent plane (keep magnitude)
 
 func _orient_sprite_to_player(cam: Camera3D) -> void:
 	# build the sprite's orientation by hand: face the camera (so it stays a flat billboard) AND

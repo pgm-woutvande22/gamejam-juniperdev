@@ -75,8 +75,9 @@ light_path = NodePath("DirectionalLight3D")
 radius = 10.0
 move_speed = 30.0
 turn_speed = 20.0
-accel_speed = 20.0
+accel_speed = 50.0
 friction = 1.0
+bounce_strength = 1.0
 dash_distance = 10.0
 dash_cooldown = 2.0
 dash_particles_path = NodePath("DashParticles")
@@ -117,4 +118,43 @@ material_override = SubResource("StandardMaterial3D_cq5gf")
 mesh = SubResource("SphereMesh_0k001")
 
 [node name="Enemy" parent="." unique_id=1990566202 instance=ExtResource("5_cq5gf")]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 144.296, 0, 0)
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 144.296, 0, 52.383804)
+
+[node name="Enemy2" parent="." unique_id=965672131 instance=ExtResource("5_cq5gf")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 144.296, 0, 43.356544)
+
+[node name="Enemy3" parent="." unique_id=135948375 instance=ExtResource("5_cq5gf")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 144.296, 0, 29.601173)
+
+[node name="Enemy4" parent="." unique_id=1012096096 instance=ExtResource("5_cq5gf")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 144.296, 0, 15.869598)
+
+[node name="Enemy5" parent="." unique_id=778759057 instance=ExtResource("5_cq5gf")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 144.296, 0, -6.085449)
+
+[node name="Enemy6" parent="." unique_id=1490695467 instance=ExtResource("5_cq5gf")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 144.296, 0, -29.216537)
+
+[node name="Enemy7" parent="." unique_id=329949047 instance=ExtResource("5_cq5gf")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 144.296, 0, -53.227524)
+
+[node name="Enemy8" parent="." unique_id=1892044778 instance=ExtResource("5_cq5gf")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 208.74086, 0, 52.383804)
+
+[node name="Enemy9" parent="." unique_id=1423841912 instance=ExtResource("5_cq5gf")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 208.74086, 0, 43.356544)
+
+[node name="Enemy10" parent="." unique_id=1061693722 instance=ExtResource("5_cq5gf")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 208.74086, 0, 29.601173)
+
+[node name="Enemy11" parent="." unique_id=1637674835 instance=ExtResource("5_cq5gf")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 208.74086, 0, 15.869598)
+
+[node name="Enemy12" parent="." unique_id=732738996 instance=ExtResource("5_cq5gf")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 208.74086, 0, -6.085449)
+
+[node name="Enemy13" parent="." unique_id=221534992 instance=ExtResource("5_cq5gf")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 208.74086, 0, -29.216537)
+
+[node name="Enemy14" parent="." unique_id=1734694253 instance=ExtResource("5_cq5gf")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 208.74086, 0, -53.227524)

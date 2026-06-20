@@ -18,6 +18,8 @@ extends Resource
 @export var move_speed: float = 18.0       # surface speed (units/sec); keep below the Top's
 @export var turn_speed: float = 4.0        # radians/sec the heading can swing toward the target
 @export var chase_range: float = 60.0      # surface distance at which it starts chasing
+@export var separation_radius: float = 6.0 # push away from other enemies within this distance (anti-clump)
+@export var separation_strength: float = 1.5 # how hard the push steers vs chasing the player
 
 @export_group("Appearance")
 @export var texture: Texture2D             # the billboard sprite; null keeps the scene's default

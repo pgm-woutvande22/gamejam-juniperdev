@@ -32,7 +32,7 @@ scale_curve = SubResource("CurveTexture_cq5gf")
 
 [sub_resource type="StandardMaterial3D" id="StandardMaterial3D_7l045"]
 transparency = 1
-albedo_color = Color(0, 0, 0, 1)
+vertex_color_use_as_albedo = true
 billboard_mode = 1
 
 [sub_resource type="QuadMesh" id="QuadMesh_tas22"]
@@ -63,6 +63,7 @@ accel_speed = 20.0
 friction = 1.0
 dash_distance = 10.0
 dash_particles_path = NodePath("DashParticles")
+dash_colors = Array[Color]([Color(1, 1, 1, 1), Color(1, 0, 0, 1), Color(0.9801654, 0.05025994, 0.3236682, 1), Color(0.9880797, 0.3052566, 0.040456824, 1)])
 camera_distance = 35.0
 camera_pitch_deg = 89.0
 
@@ -84,7 +85,7 @@ emitting = false
 amount = 60
 lifetime = 0.7
 one_shot = true
-trail_lifetime = 0.95
+trail_lifetime = 1.41
 process_material = SubResource("ParticleProcessMaterial_tas22")
 draw_pass_1 = SubResource("QuadMesh_tas22")
 

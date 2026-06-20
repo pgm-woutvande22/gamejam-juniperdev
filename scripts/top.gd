@@ -14,6 +14,7 @@ extends CharacterBody3D
 @export var dash_duration: float = 0.18      # how long the dash burst lasts (lower = snappier)
 @export var dash_cooldown: float = 0.6       # min time between dashes
 @export var dash_particles_path: NodePath    # optional GPUParticles3D trail dropped behind the top while dashing
+@export var dash_colors: Array[Color] = []   # palette tinted into the trail per dash; empty = random hue
 @export var camera_distance: float = 10.0    # how far the camera sits from the top
 @export_range(10.0, 89.0) var camera_pitch_deg: float = 60.0 # 89 = straight overhead, lower = more behind-and-above
 
@@ -49,6 +50,7 @@ func _ready() -> void:
 	global_position = planet_center + up * radius
 	heading = _project_tangent(heading, up)
 	view_dir = heading
+	_setup_dash_colors()
 	_update_camera(up)
 	_update_light(up)
 
@@ -142,6 +144,34 @@ func _physics_process(delta: float) -> void:
 
 	_update_camera(up)   # follow the top every frame, recentering immediately (no lag = no spiral)
 	_update_light(up)
+
+func _setup_dash_colors() -> void:
+	# build a Color Initial Ramp so EACH particle samples a random color from the palette,
+	# giving a multi-colored trail (all colors at once). dash_colors empty = a rainbow.
+	if dash_particles == null:
+		return
+	var mat := dash_particles.process_material as ParticleProcessMaterial
+	if mat == null:
+		return
+
+	var gradient := Gradient.new()
+	# Gradient.new() ships with 2 default stops; we replace them wholesale below
+	var cols := dash_colors
+	if cols.is_empty():
+		cols = [Color.RED, Color.YELLOW, Color.GREEN, Color.CYAN, Color.BLUE, Color.MAGENTA]
+	var offsets := PackedFloat32Array()
+	var colors := PackedColorArray()
+	for i in cols.size():
+		# spread the palette evenly from 0..1 so the random sample hits all colors equally
+		offsets.append(0.0 if cols.size() == 1 else float(i) / float(cols.size() - 1))
+		colors.append(cols[i])
+	gradient.offsets = offsets
+	gradient.colors = colors
+
+	var ramp := GradientTexture1D.new()
+	ramp.gradient = gradient
+	mat.color_initial_ramp = ramp   # per-particle: each draws a random point on this ramp
+	mat.color = Color.WHITE         # keep base white so the ramp colors show true
 
 func _set_trail(on: bool) -> void:
 	# toggle continuous emission; particles use world-space coords so they stay

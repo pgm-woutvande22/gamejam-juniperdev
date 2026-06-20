@@ -201,6 +201,9 @@ func _resolve_contact() -> void:
 	hit_cooldown_left = hit_cooldown
 
 	if speed >= kill_threshold:
+		# a clean kill: reward the player with chain momentum before we disappear
+		if target.has_method("on_enemy_killed"):
+			target.on_enemy_killed()
 		_die()
 		return
 

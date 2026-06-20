@@ -28,6 +28,7 @@ signal died(enemy: Node, score: int)   # emitted on death; connect in the level 
 @export var hit_cooldown: float = 0.4
 @export var score: int = 100
 @export var surface_offset: float = 0.0        # extra lift above the auto "rest on surface" height
+@export var face_player: bool = true           # flip the sprite horizontally to look toward the Top
 
 var planet_center: Vector3
 var heading: Vector3 = Vector3.FORWARD         # tangent direction the enemy faces
@@ -39,6 +40,10 @@ var hit_cooldown_left: float = 0.0
 
 func _ready() -> void:
 	_apply_type()
+	if sprite != null:
+		# when we roll the sprite to face the player we drive its full orientation, so the engine's
+		# auto-billboard must be off (it would fight our roll). otherwise let it auto-billboard.
+		sprite.billboard = BaseMaterial3D.BILLBOARD_DISABLED if face_player else BaseMaterial3D.BILLBOARD_ENABLED
 	var planet := get_node(planet_path)
 	planet_center = planet.global_position
 	# orbit radius = planet surface; the billboard sprite is centered on the surface point
@@ -98,6 +103,13 @@ func _physics_process(delta: float) -> void:
 	#     the camera on its own, so this only keeps the node's frame consistent for collision ---
 	global_transform.basis = Basis.looking_at(heading, up)
 
+	# --- face the player: roll the billboard around the view axis so the sprite's BOTTOM edge
+	#     points at the Top, wherever the player is on the planet ---
+	if face_player and sprite != null and target != null:
+		var cam := get_viewport().get_camera_3d()
+		if cam != null:
+			_orient_sprite_to_player(cam)
+
 func _apply_type() -> void:
 	# copy the assigned type's stats into our live values. no-op if no type is set,
 	# so a hand-tuned enemy keeps its inspector values.
@@ -122,6 +134,7 @@ func _apply_type() -> void:
 		sprite.pixel_size = type.pixel_size
 		sprite.scale = Vector3.ONE * type.sprite_scale
 		surface_offset = type.surface_offset
+		face_player = type.face_player
 
 func _place_sprite() -> void:
 	# lift the sprite along the surface normal so its BASE rests on the surface, not its center.
@@ -134,6 +147,25 @@ func _place_sprite() -> void:
 	if sprite.texture != null:
 		half_h = sprite.texture.get_height() * sprite.pixel_size * sprite.scale.y * 0.5
 	sprite.position = Vector3.UP * (half_h + surface_offset)
+
+func _orient_sprite_to_player(cam: Camera3D) -> void:
+	# build the sprite's orientation by hand: face the camera (so it stays a flat billboard) AND
+	# roll it so the texture's bottom (-Y) points toward the Top on screen.
+	var pos := sprite.global_position
+	var z_axis := (cam.global_position - pos).normalized()        # sprite front (+Z) faces the camera
+	if z_axis == Vector3.ZERO:
+		return
+	# direction to the player, flattened into the screen plane (perpendicular to the view axis)
+	var to_player := target.global_position - pos
+	var screen_dir := to_player - z_axis * to_player.dot(z_axis)
+	if screen_dir.length() < 0.0001:
+		return
+	screen_dir = screen_dir.normalized()
+	var y_axis := -screen_dir                                     # +Y is up, so -Y (bottom) faces the player
+	var x_axis := y_axis.cross(z_axis).normalized()
+	y_axis = z_axis.cross(x_axis).normalized()                    # re-orthonormalize
+	var b := Basis(x_axis, y_axis, z_axis).scaled(sprite.scale)   # keep the sprite's scale
+	sprite.global_transform = Transform3D(b, pos)
 
 func _resolve_contact() -> void:
 	# read how fast the player is moving along the surface (dash-aware, see top.gd)

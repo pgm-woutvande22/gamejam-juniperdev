@@ -29,3 +29,5 @@ extends Resource
 # --- placement: how far the sprite is lifted off the surface along the normal (world units).
 #     0 = centered on the surface point; raise it to sit the art on top of the planet ---
 @export var surface_offset: float = 0.0
+# when true, the sprite flips horizontally to face the player instead of always facing one way
+@export var face_player: bool = true

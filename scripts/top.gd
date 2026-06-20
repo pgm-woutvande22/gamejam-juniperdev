@@ -13,6 +13,7 @@ extends CharacterBody3D
 @export var dash_distance: float = 12.0      # max surface distance a single dash covers
 @export var dash_duration: float = 0.18      # how long the dash burst lasts (lower = snappier)
 @export var dash_cooldown: float = 0.6       # min time between dashes
+@export var dash_particles_path: NodePath    # optional GPUParticles3D trail dropped behind the top while dashing
 @export var camera_distance: float = 10.0    # how far the camera sits from the top
 @export_range(10.0, 89.0) var camera_pitch_deg: float = 60.0 # 89 = straight overhead, lower = more behind-and-above
 
@@ -31,6 +32,7 @@ var prev_rmb: bool = false                   # last frame's right-mouse state, f
 @onready var mesh: Node3D = $TopMesh
 @onready var camera: Camera3D = get_node_or_null(camera_path)
 @onready var light: DirectionalLight3D = get_node_or_null(light_path)
+@onready var dash_particles: GPUParticles3D = get_node_or_null(dash_particles_path)
 
 func _ready() -> void:
 	var planet := get_node(planet_path)
@@ -78,6 +80,7 @@ func _physics_process(delta: float) -> void:
 		surface_vel = heading * move_speed
 		global_transform.basis = Basis.looking_at(heading, up)
 		mesh.rotate_object_local(Vector3.UP, deg_to_rad(spin_visual_speed) * delta)
+		_set_trail(true)   # always trail while dashing
 		_update_camera(up)
 		_update_light(up)
 		return
@@ -134,8 +137,17 @@ func _physics_process(delta: float) -> void:
 	# --- spin the visual mesh around its own up ---
 	mesh.rotate_object_local(Vector3.UP, deg_to_rad(spin_visual_speed) * delta)
 
+	# --- trail is dash-only (see the dash branch above); keep it off during normal movement ---
+	_set_trail(false)
+
 	_update_camera(up)   # follow the top every frame, recentering immediately (no lag = no spiral)
 	_update_light(up)
+
+func _set_trail(on: bool) -> void:
+	# toggle continuous emission; particles use world-space coords so they stay
+	# put as the top moves away, forming a trail rather than a clump on the player
+	if dash_particles != null and dash_particles.emitting != on:
+		dash_particles.emitting = on
 
 func _start_dash(up: Vector3) -> void:
 	# pick the tangent direction to dash in: toward the cursor if it's over the planet,

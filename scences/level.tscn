@@ -80,7 +80,6 @@ camera_path = NodePath("Camera3D")
 light_path = NodePath("DirectionalLight3D")
 radius = 10.0
 move_speed = 30.0
-turn_speed = 20.0
 accel_speed = 50.0
 friction = 1.0
 bounce_strength = 1.0

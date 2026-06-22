@@ -5,7 +5,6 @@ extends CharacterBody3D
 @export var light_path: NodePath             # the DirectionalLight3D that follows the top
 @export var radius: float = 5.0
 @export var move_speed: float = 4.0          # top speed in units/sec along the surface
-@export var turn_speed: float = 1.5          # radians/sec (keyboard turning)
 @export var full_speed_distance: float = 6.0 # cursor distance (surface units) at which you hit top speed; closer = slower
 @export var accel_speed: float = 8.0         # acceleration (units/sec^2): caps how fast speed AND direction can change; lower = more elastic
 @export var friction: float = 2.0            # how quickly it coasts to a stop when you let go (lower = longer glide)
@@ -111,13 +110,7 @@ func _physics_process(delta: float) -> void:
 				# speed ramps linearly from 0 (cursor on the top) to move_speed at full_speed_distance
 				var t := clampf(dist / maxf(full_speed_distance, 0.001), 0.0, 1.0)
 				target_vel = dir.normalized() * (move_speed * t)
-	else:
-		# keyboard fallback when not dragging
-		var turn := Input.get_axis("move_right", "move_left")
-		heading = _project_tangent(heading.rotated(up, turn * turn_speed * delta), up)
-		var fwd := Input.get_axis("move_back", "move_forward")
-		if fwd != 0.0:
-			target_vel = heading * (fwd * move_speed)
+	# no input (not dragging) leaves target_vel at zero, so the top coasts to a stop via friction
 
 	# --- ease velocity toward the target at a capped rate, so the top can't change speed OR
 	#     direction instantly: it must decelerate out of its current heading and accelerate into

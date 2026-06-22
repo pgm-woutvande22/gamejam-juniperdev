@@ -5,6 +5,8 @@
 [ext_resource type="Texture2D" uid="uid://ch8qa1kx5775f" path="res://assets/CustomUVChecker_byValle_1K.png" id="2_qi052"]
 [ext_resource type="Texture2D" uid="uid://bwldoqvfdpq56" path="res://assets/testy.png" id="3_tas22"]
 [ext_resource type="PackedScene" uid="uid://dyihxt88e4143" path="res://scences/enemy.tscn" id="5_cq5gf"]
+[ext_resource type="PackedScene" uid="uid://b8spwnr0enmy1" path="res://scences/spawner.tscn" id="6_3irxl"]
+[ext_resource type="Script" uid="uid://dqhnf6mict2fr" path="res://scripts/enemy_type.gd" id="7_2mwew"]
 
 [sub_resource type="StandardMaterial3D" id="StandardMaterial3D_qi052"]
 albedo_color = Color(18.892157, 18.892157, 18.892157, 1)
@@ -64,6 +66,10 @@ albedo_texture = ExtResource("3_tas22")
 [sub_resource type="SphereMesh" id="SphereMesh_0k001"]
 material = SubResource("StandardMaterial3D_dckfn")
 
+[sub_resource type="Resource" id="Resource_2mwew"]
+script = ExtResource("7_2mwew")
+metadata/_custom_type_script = "uid://dqhnf6mict2fr"
+
 [node name="level" type="Node3D" unique_id=738747087]
 
 [node name="Top" type="CharacterBody3D" parent="." unique_id=1907083630]
@@ -118,122 +124,6 @@ transform = Transform3D(100, 0, 0, 0, 100, 0, 0, 0, 100, 0, 0, 0)
 material_override = SubResource("StandardMaterial3D_cq5gf")
 mesh = SubResource("SphereMesh_0k001")
 
-[node name="Enemy" parent="." unique_id=1990566202 instance=ExtResource("5_cq5gf")]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 144.296, 0, 8.775665)
-kill_threshold = 40.0
-max_health = 45.0
-
-[node name="Enemy2" parent="." unique_id=287539789 instance=ExtResource("5_cq5gf")]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 144.296, 0, 26.511337)
-kill_threshold = 40.0
-max_health = 45.0
-
-[node name="Enemy3" parent="." unique_id=1882158499 instance=ExtResource("5_cq5gf")]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 144.296, 0, 44.491173)
-kill_threshold = 40.0
-max_health = 45.0
-
-[node name="Enemy4" parent="." unique_id=545214108 instance=ExtResource("5_cq5gf")]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 144.296, 0, 61.233177)
-kill_threshold = 40.0
-max_health = 45.0
-
-[node name="Enemy5" parent="." unique_id=2005513211 instance=ExtResource("5_cq5gf")]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -89.35745, 0, 8.775665)
-kill_threshold = 40.0
-max_health = 45.0
-
-[node name="Enemy6" parent="." unique_id=844581518 instance=ExtResource("5_cq5gf")]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -89.35745, 0, 26.511337)
-kill_threshold = 40.0
-max_health = 45.0
-
-[node name="Enemy7" parent="." unique_id=1492513779 instance=ExtResource("5_cq5gf")]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -89.35745, 0, 44.491173)
-kill_threshold = 40.0
-max_health = 45.0
-
-[node name="Enemy8" parent="." unique_id=1761328136 instance=ExtResource("5_cq5gf")]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -89.35745, 0, 61.233177)
-kill_threshold = 40.0
-max_health = 45.0
-
-[node name="Enemy9" parent="." unique_id=1567966061 instance=ExtResource("5_cq5gf")]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -89.35745, -68.094894, 8.775665)
-kill_threshold = 40.0
-max_health = 45.0
-
-[node name="Enemy10" parent="." unique_id=2046119081 instance=ExtResource("5_cq5gf")]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -89.35745, -68.094894, 26.511337)
-kill_threshold = 40.0
-max_health = 45.0
-
-[node name="Enemy11" parent="." unique_id=666721095 instance=ExtResource("5_cq5gf")]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -89.35745, -68.094894, 44.491173)
-kill_threshold = 40.0
-max_health = 45.0
-
-[node name="Enemy12" parent="." unique_id=2097714732 instance=ExtResource("5_cq5gf")]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -89.35745, -68.094894, 61.233177)
-kill_threshold = 40.0
-max_health = 45.0
-
-[node name="Enemy13" parent="." unique_id=668316906 instance=ExtResource("5_cq5gf")]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -12.283089, -68.094894, 8.775665)
-kill_threshold = 40.0
-max_health = 45.0
-
-[node name="Enemy14" parent="." unique_id=682606780 instance=ExtResource("5_cq5gf")]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -12.283089, -68.094894, 26.511337)
-kill_threshold = 40.0
-max_health = 45.0
-
-[node name="Enemy15" parent="." unique_id=707388994 instance=ExtResource("5_cq5gf")]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -12.283089, -68.094894, 44.491173)
-kill_threshold = 40.0
-max_health = 45.0
-
-[node name="Enemy16" parent="." unique_id=469848449 instance=ExtResource("5_cq5gf")]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -12.283089, -68.094894, 61.233177)
-kill_threshold = 40.0
-max_health = 45.0
-
-[node name="Enemy17" parent="." unique_id=434970720 instance=ExtResource("5_cq5gf")]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 68.48247, -68.094894, 8.775665)
-kill_threshold = 40.0
-max_health = 45.0
-
-[node name="Enemy18" parent="." unique_id=720212186 instance=ExtResource("5_cq5gf")]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 68.48247, -68.094894, 26.511337)
-kill_threshold = 40.0
-max_health = 45.0
-
-[node name="Enemy19" parent="." unique_id=1596122948 instance=ExtResource("5_cq5gf")]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 68.48247, -68.094894, 44.491173)
-kill_threshold = 40.0
-max_health = 45.0
-
-[node name="Enemy20" parent="." unique_id=709325459 instance=ExtResource("5_cq5gf")]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 68.48247, -68.094894, 61.233177)
-kill_threshold = 40.0
-max_health = 45.0
-
-[node name="Enemy21" parent="." unique_id=242480642 instance=ExtResource("5_cq5gf")]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 135.27145, -68.094894, 8.775665)
-kill_threshold = 40.0
-max_health = 45.0
-
-[node name="Enemy22" parent="." unique_id=844032535 instance=ExtResource("5_cq5gf")]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 135.27145, -68.094894, 26.511337)
-kill_threshold = 40.0
-max_health = 45.0
-
-[node name="Enemy23" parent="." unique_id=373582582 instance=ExtResource("5_cq5gf")]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 135.27145, -68.094894, 44.491173)
-kill_threshold = 40.0
-max_health = 45.0
-
-[node name="Enemy24" parent="." unique_id=179947856 instance=ExtResource("5_cq5gf")]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 135.27145, -68.094894, 61.233177)
-kill_threshold = 40.0
-max_health = 45.0
+[node name="Spawner" parent="." unique_id=1257519610 instance=ExtResource("6_3irxl")]
+enemy_scene = ExtResource("5_cq5gf")
+enemy_types = Array[ExtResource("7_2mwew")]([SubResource("Resource_2mwew")])

@@ -1,20 +1,17 @@
-[gd_resource type="Resource" script_class="EnemyType" load_steps=2 format=3]
+[gd_resource type="Resource" script_class="EnemyType" format=3 uid="uid://gex2xifpuho7"]
 
-[ext_resource type="Script" path="res://scripts/enemy_type.gd" id="1"]
+[ext_resource type="Script" uid="uid://dqhnf6mict2fr" path="res://scripts/enemy_type.gd" id="1"]
 
 [resource]
 script = ExtResource("1")
 type_name = "Charger"
-kill_threshold = 50.0
-max_health = 80.0
+kill_threshold = 20.0
+max_health = 20.0
 hit_distance = 4.5
-hit_cooldown = 0.4
 score = 250
 move_speed = 24.0
 turn_speed = 3.0
 chase_range = 80.0
-modulate = Color(0.55, 0.2, 0.85, 1)
-opacity = 1.0
+modulate = Color(1.92523e-06, 0.86153716, 0.11784484, 1)
 pixel_size = 0.07
-sprite_scale = 1.4
-surface_offset = 0.0
+sprite_scale = 0.2

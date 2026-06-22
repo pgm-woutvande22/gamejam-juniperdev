@@ -32,6 +32,10 @@ signal died(enemy: Node, score: int)   # emitted on death; connect in the level 
 @export var surface_offset: float = 0.0        # extra lift above the auto "rest on surface" height
 @export var face_player: bool = true           # flip the sprite horizontally to look toward the Top
 
+@export_group("Damage numbers")
+@export var damage_number_scene: PackedScene   # Label3D popup shown when this enemy is hit; null = off
+@export var damage_number_height: float = 5.0  # how far above the enemy (along the surface normal) it appears
+
 var planet_center: Vector3
 var heading: Vector3 = Vector3.FORWARD         # tangent direction the enemy faces
 var health: float = 0.0
@@ -201,7 +205,8 @@ func _resolve_contact() -> void:
 	hit_cooldown_left = hit_cooldown
 
 	if speed >= kill_threshold:
-		# a clean kill: reward the player with chain momentum before we disappear
+		# a clean kill: pop a big "crit" number, reward the player with chain momentum, then disappear
+		_spawn_damage_number(speed, true)
 		if target.has_method("on_enemy_killed"):
 			target.on_enemy_killed()
 		_die()
@@ -209,10 +214,26 @@ func _resolve_contact() -> void:
 
 	# sub-threshold: the enemy takes the player's speed as damage and shoves the player back
 	health -= speed
+	_spawn_damage_number(speed, false)
 	if target.has_method("bounce_off"):
 		target.bounce_off(global_position)
 	if health <= 0.0:
 		_die()
+
+func _spawn_damage_number(amount: float, killing: bool) -> void:
+	# float a Label3D popup above us. parent it to the scene (NOT to self) so it survives our
+	# queue_free on a killing blow, and set its fields before add_child so its _ready can animate.
+	if damage_number_scene == null:
+		return
+	var popup := damage_number_scene.instantiate()
+	popup.amount = amount
+	popup.is_crit = killing
+	var up := (global_position - planet_center).normalized()
+	popup.spawn_position = global_position + up * damage_number_height
+	var host := get_tree().current_scene
+	if host == null:
+		host = get_parent()
+	host.add_child(popup)
 
 func _die() -> void:
 	# TODO: spawn a death effect / play a sound here

@@ -7,6 +7,9 @@
 [ext_resource type="PackedScene" uid="uid://dyihxt88e4143" path="res://scences/enemy.tscn" id="5_cq5gf"]
 [ext_resource type="PackedScene" uid="uid://b8spwnr0enmy1" path="res://scences/spawner.tscn" id="6_3irxl"]
 [ext_resource type="Script" uid="uid://dqhnf6mict2fr" path="res://scripts/enemy_type.gd" id="7_2mwew"]
+[ext_resource type="Resource" uid="uid://8vjdnbm3r6ym" path="res://enemy_types/crab.tres" id="8_gmcrc"]
+[ext_resource type="Resource" uid="uid://gex2xifpuho7" path="res://enemy_types/charger.tres" id="9_nskur"]
+[ext_resource type="Resource" uid="uid://cpc00rv3kk0mo" path="res://enemy_types/grunt.tres" id="10_olo2r"]
 
 [sub_resource type="StandardMaterial3D" id="StandardMaterial3D_qi052"]
 albedo_color = Color(18.892157, 18.892157, 18.892157, 1)
@@ -66,10 +69,6 @@ albedo_texture = ExtResource("3_tas22")
 [sub_resource type="SphereMesh" id="SphereMesh_0k001"]
 material = SubResource("StandardMaterial3D_dckfn")
 
-[sub_resource type="Resource" id="Resource_2mwew"]
-script = ExtResource("7_2mwew")
-metadata/_custom_type_script = "uid://dqhnf6mict2fr"
-
 [node name="level" type="Node3D" unique_id=738747087]
 
 [node name="Top" type="CharacterBody3D" parent="." unique_id=1907083630]
@@ -125,4 +124,4 @@ mesh = SubResource("SphereMesh_0k001")
 
 [node name="Spawner" parent="." unique_id=1257519610 instance=ExtResource("6_3irxl")]
 enemy_scene = ExtResource("5_cq5gf")
-enemy_types = Array[ExtResource("7_2mwew")]([SubResource("Resource_2mwew")])
+enemy_types = Array[ExtResource("7_2mwew")]([ExtResource("8_gmcrc"), ExtResource("9_nskur"), ExtResource("10_olo2r")])

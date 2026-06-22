@@ -1,0 +1,15 @@
+[gd_resource type="Resource" script_class="EnemyType" format=3 uid="uid://8vjdnbm3r6ym"]
+
+[ext_resource type="Script" uid="uid://dqhnf6mict2fr" path="res://scripts/enemy_type.gd" id="1"]
+[ext_resource type="Texture2D" uid="uid://b3xuy0whui8iy" path="res://assets/Crab.png" id="2"]
+
+[resource]
+script = ExtResource("1")
+type_name = "Crab"
+kill_threshold = 35.0
+max_health = 40.0
+score = 150
+move_speed = 16.0
+chase_range = 65.0
+texture = ExtResource("2")
+sprite_scale = 0.5

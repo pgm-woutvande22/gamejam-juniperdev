@@ -1,0 +1,18 @@
+[gd_scene format=3 uid="uid://cdmgnum00pop1"]
+
+[ext_resource type="FontFile" uid="uid://bpqao6spkush3" path="res://assets/fonts/Pixelify_Sans/static/PixelifySans-Regular.ttf" id="1_5rktg"]
+[ext_resource type="Script" uid="uid://bbw0o374p7bkd" path="res://scripts/damage_number.gd" id="1_dmgn"]
+
+[node name="DamageNumber" type="Label3D" unique_id=472048501]
+pixel_size = 0.0005
+billboard = 1
+no_depth_test = true
+fixed_size = true
+render_priority = 10
+outline_render_priority = 9
+font = ExtResource("1_5rktg")
+font_size = 96
+outline_size = 28
+script = ExtResource("1_dmgn")
+normal_color = Color(1, 0.98333335, 0, 1)
+crit_color = Color(1, 0.19999999, 0.19999999, 1)

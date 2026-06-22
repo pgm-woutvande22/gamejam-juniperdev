@@ -42,6 +42,9 @@ var prev_rmb: bool = false                   # last frame's right-mouse state, f
 @onready var dash_particles: GPUParticles3D = get_node_or_null(dash_particles_path)
 @onready var dash_indicator: MeshInstance3D = get_node_or_null(dash_indicator_path)
 
+@export var alive: bool = true
+@export var lifesteal: int = 30
+
 func _ready() -> void:
 	var planet := get_node(planet_path)
 	planet_center = planet.global_position
@@ -60,6 +63,10 @@ func _ready() -> void:
 	_setup_dash_colors()
 	_update_camera(up)
 	_update_light(up)
+	_spin_decay()
+
+#func _process(delta: float) -> void:
+	#_update_spin_label()
 
 func _physics_process(delta: float) -> void:
 	var up := (global_position - planet_center).normalized()
@@ -285,6 +292,7 @@ func on_enemy_killed() -> void:
 	# optionally refreshes the dash so you can immediately lunge at the next enemy.
 	# refund part of the dash cooldown so kills shorten the wait for the next dash
 	dash_cooldown_left = maxf(dash_cooldown_left - dash_cooldown * kill_dash_refund, 0.0)
+	spin_visual_speed += lifesteal
 	if dash_time_left > 0.0:
 		# mid-dash: snowball the dash so one lunge can plow through a line of enemies
 		dash_exit_speed = minf(dash_exit_speed + kill_boost_speed, kill_boost_max)
@@ -315,3 +323,15 @@ func bounce_off(from_pos: Vector3) -> void:
 func _project_tangent(v: Vector3, up: Vector3) -> Vector3:
 	# remove the component along 'up' so the vector stays on the tangent plane
 	return (v - up * v.dot(up)).normalized()
+
+func _spin_decay():
+	while(alive):
+		if spin_visual_speed <= 0:
+			alive = false
+			break
+		spin_visual_speed -= 10
+		await get_tree().create_timer(1.5).timeout
+
+#func _update_spin_label():
+	#$Camera3D/Label.text = "Speed: " + str(spin_visual_speed)
+	#await get_tree().create_timer(1.5).timeout

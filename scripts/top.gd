@@ -303,6 +303,7 @@ func on_enemy_killed() -> void:
 		surface_vel = heading * boosted
 
 func bounce_off(from_pos: Vector3) -> void:
+	spin_visual_speed -= 10
 	# rebound away from a contact point (e.g. an enemy we hit too slowly to kill).
 	var up := (global_position - planet_center).normalized()
 	# contact normal in the tangent plane, pointing from the obstacle toward us

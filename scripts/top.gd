@@ -44,6 +44,7 @@ var prev_rmb: bool = false                   # last frame's right-mouse state, f
 
 @export var alive: bool = true
 @export var lifesteal: int = 30
+@export var AfterImageEmitter:GPUParticles3D
 
 func _ready() -> void:
 	var planet := get_node(planet_path)
@@ -65,9 +66,6 @@ func _ready() -> void:
 	_update_light(up)
 	_spin_decay()
 
-#func _process(delta: float) -> void:
-	#_update_spin_label()
-
 func _physics_process(delta: float) -> void:
 	var up := (global_position - planet_center).normalized()
 
@@ -83,7 +81,12 @@ func _physics_process(delta: float) -> void:
 	if rmb and not prev_rmb and dash_time_left <= 0.0 and dash_cooldown_left <= 0.0:
 		_start_dash(up)
 	prev_rmb = rmb
-
+	
+	if get_surface_speed() > 45.0:
+		AfterImageEmitter.emitting = true
+	else:
+		AfterImageEmitter.emitting = false
+	
 	# --- while dashing, override normal movement: rotate along the fixed great-circle axis ---
 	if dash_time_left > 0.0:
 		var step := minf(dash_time_left, delta)
@@ -335,7 +338,3 @@ func bounce_off(from_pos: Vector3, damage: int) -> void:
 
 func lose_spin(amount: float) -> void:
 	spin_visual_speed -= amount
-
-#func _update_spin_label() -> void:
-	#$Camera3D/Label.text = "Speed: " + str(spin_visual_speed)
-	#await get_tree().create_timer(1.5).timeout

@@ -75,6 +75,30 @@ shader_parameter/edge_softness = 0.02
 [sub_resource type="QuadMesh" id="QuadMesh_pg4a6"]
 material = SubResource("ShaderMaterial_mjhmi")
 
+[sub_resource type="Curve" id="Curve_dy8na"]
+_data = [Vector2(0, 1), 0.0, 0.0, 0, 0, Vector2(1, 0), 0.0, 0.0, 0, 0]
+point_count = 2
+
+[sub_resource type="CurveTexture" id="CurveTexture_dy8na"]
+curve = SubResource("Curve_dy8na")
+
+[sub_resource type="ParticleProcessMaterial" id="ParticleProcessMaterial_ygwbq"]
+gravity = Vector3(0, 0, 0)
+use_scale_3d = true
+scale_3d_min = Vector3(1, 1, 1)
+scale_3d_max = Vector3(1, 1, 1)
+alpha_curve = SubResource("CurveTexture_dy8na")
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_neqcb"]
+transparency = 1
+vertex_color_use_as_albedo = true
+albedo_color = Color(0.68307734, 0.6830774, 0.68307734, 1)
+albedo_texture = ExtResource("4_dy8na")
+
+[sub_resource type="PlaneMesh" id="PlaneMesh_dy8na"]
+material = SubResource("StandardMaterial3D_neqcb")
+size = Vector2(3.5, 3.5)
+
 [sub_resource type="ShaderMaterial" id="ShaderMaterial_planet"]
 render_priority = 0
 shader = ExtResource("12_pxpl")
@@ -135,7 +159,7 @@ environment = SubResource("Environment_bg")
 script = ExtResource("15_skyp")
 parallax = 0.12
 
-[node name="Top" type="CharacterBody3D" parent="." unique_id=1907083630]
+[node name="Top" type="CharacterBody3D" parent="." unique_id=1907083630 node_paths=PackedStringArray("AfterImageEmitter")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 120.80496, 0)
 script = ExtResource("1_dckfn")
 planet_path = NodePath("../Planet")
@@ -154,6 +178,7 @@ dash_colors = Array[Color]([Color(1, 0.96862745, 0, 1), Color(1, 1, 1, 1), Color
 dash_indicator_path = NodePath("DashIndicator")
 camera_distance = 35.0
 camera_pitch_deg = 89.0
+AfterImageEmitter = NodePath("AfterImageParticle")
 
 [node name="Camera3D" type="Camera3D" parent="Top" unique_id=1564292906]
 transform = Transform3D(1, 0, 0, 0, 0.894427, 0.447214, 0, -0.447214, 0.894427, 0, -121.40506, 134.60197)
@@ -184,6 +209,13 @@ draw_pass_1 = SubResource("QuadMesh_tas22")
 [node name="DashIndicator" type="MeshInstance3D" parent="Top" unique_id=1332331279]
 transform = Transform3D(4.22, 0, 0, 0, -1.8446205e-07, 4.22, 0, -4.22, -1.8446205e-07, 0, 2.033493, 0)
 mesh = SubResource("QuadMesh_pg4a6")
+
+[node name="AfterImageParticle" type="GPUParticles3D" parent="Top" unique_id=1609273342]
+emitting = false
+amount = 4
+lifetime = 0.25
+process_material = SubResource("ParticleProcessMaterial_ygwbq")
+draw_pass_1 = SubResource("PlaneMesh_dy8na")
 
 [node name="Planet" type="MeshInstance3D" parent="." unique_id=1564292905]
 transform = Transform3D(100, 0, 0, 0, 100, 0, 0, 0, 100, 0, 0, 0)

@@ -3,13 +3,13 @@
 [ext_resource type="Script" uid="uid://cr1pdrt4vamyh" path="res://scripts/top.gd" id="1_dckfn"]
 [ext_resource type="Shader" uid="uid://c7yhsbhudabf" path="res://shaders/dash_indicator.gdshader" id="2_7l045"]
 [ext_resource type="Texture2D" uid="uid://bwldoqvfdpq56" path="res://assets/testy.png" id="3_tas22"]
+[ext_resource type="Texture2D" uid="uid://3i3r3dly8d7t" path="res://assets/Bey2.png" id="4_dy8na"]
 [ext_resource type="PackedScene" uid="uid://dyihxt88e4143" path="res://scences/enemy.tscn" id="5_cq5gf"]
 [ext_resource type="PackedScene" uid="uid://b8spwnr0enmy1" path="res://scences/spawner.tscn" id="6_3irxl"]
 [ext_resource type="Script" uid="uid://dqhnf6mict2fr" path="res://scripts/enemy_type.gd" id="7_2mwew"]
 [ext_resource type="Resource" uid="uid://8vjdnbm3r6ym" path="res://enemy_types/crab.tres" id="8_gmcrc"]
 [ext_resource type="Resource" uid="uid://gex2xifpuho7" path="res://enemy_types/charger.tres" id="9_nskur"]
 [ext_resource type="Resource" uid="uid://cpc00rv3kk0mo" path="res://enemy_types/grunt.tres" id="10_olo2r"]
-[ext_resource type="Texture2D" uid="uid://dwixlq3s111kx" path="res://assets/Bey.png" id="11_topgl"]
 [ext_resource type="Shader" uid="uid://b8b58ot4vi24r" path="res://shaders/pixel_planet.gdshader" id="12_pxpl"]
 [ext_resource type="Shader" uid="uid://bm2l4whyugdj7" path="res://shaders/cloud_layer.gdshader" id="13_cloud"]
 [ext_resource type="Shader" uid="uid://dhs2rlp05a6i4" path="res://shaders/space_sky.gdshader" id="14_sky"]
@@ -65,9 +65,9 @@ size = Vector2(0.2, 0.2)
 render_priority = 0
 shader = ExtResource("2_7l045")
 shader_parameter/progress = 0.0
-shader_parameter/fill_color = Color(0.50329643, 0.99488574, 0.39735007, 1)
+shader_parameter/fill_color = Color(0, 0.9868271, 0.94930786, 1)
 shader_parameter/empty_color = Color(1, 1, 1, 0.12)
-shader_parameter/ready_color = Color(0.060299985, 0.67, 0.2330483, 1)
+shader_parameter/ready_color = Color(1, 0.14590883, 0.35124445, 1)
 shader_parameter/inner_radius = 0.78
 shader_parameter/outer_radius = 0.96
 shader_parameter/edge_softness = 0.02
@@ -150,7 +150,7 @@ dash_distance = 20.0
 dash_duration = 0.2
 dash_cooldown = 2.0
 dash_particles_path = NodePath("DashParticles")
-dash_colors = Array[Color]([Color(1, 1, 1, 1), Color(0.4509804, 0.6509804, 0.25882354, 1), Color(0.8392157, 0.8745098, 0.5803922, 1), Color(0.22352941, 0.28627452, 0.32156864, 1)])
+dash_colors = Array[Color]([Color(1, 0.96862745, 0, 1), Color(1, 1, 1, 1), Color(0.6784314, 0.18431373, 0.1882353, 1), Color(0.3882353, 0.8117647, 0.90588236, 1)])
 dash_indicator_path = NodePath("DashIndicator")
 camera_distance = 35.0
 camera_pitch_deg = 89.0
@@ -167,7 +167,7 @@ transform = Transform3D(0.7071068, 0.35355324, -0.6123725, 0, 0.86602557, 0.4999
 transform = Transform3D(1, 0, 0, 0, 0, -1, 0, 1, 0, 0, 1.5, 0)
 pixel_size = 0.1
 texture_filter = 0
-texture = ExtResource("11_topgl")
+texture = ExtResource("4_dy8na")
 
 [node name="CollisionShape3D" type="CollisionShape3D" parent="Top" unique_id=1850111559]
 shape = SubResource("SphereShape3D_pg4a6")

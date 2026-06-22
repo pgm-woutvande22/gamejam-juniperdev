@@ -79,10 +79,10 @@ shader_parameter/cloud_shadow_strength = 0.25
 shader_parameter/cloud_shadow_dir = Vector3(1, 0, 0.6)
 shader_parameter/cloud_shadow_offset = 0.08
 shader_parameter/cloud_pixel_density = 100.0
-shader_parameter/cloud_scale = 4.0
-shader_parameter/cloud_coverage = 0.68
-shader_parameter/cloud_softness = 0.15
-shader_parameter/cloud_speed = 0.02
+shader_parameter/cloud_scale = 3.0
+shader_parameter/cloud_coverage = 0.62
+shader_parameter/cloud_softness = 0.06
+shader_parameter/cloud_speed = 0.035
 shader_parameter/cloud_morph_speed = 0.2
 shader_parameter/cloud_morph_amount = 1.0
 

@@ -44,6 +44,8 @@ var hit_cooldown_left: float = 0.0
 @onready var sprite: Sprite3D = get_node_or_null("EnemyMesh")
 @onready var target: Node3D = get_node_or_null(target_path)
 
+@export var damage: int
+
 func _ready() -> void:
 	_apply_type()
 	if sprite != null:
@@ -216,7 +218,7 @@ func _resolve_contact() -> void:
 	health -= speed
 	_spawn_damage_number(speed, false)
 	if target.has_method("bounce_off"):
-		target.bounce_off(global_position)
+		target.bounce_off(global_position, damage)
 	if health <= 0.0:
 		_die()
 

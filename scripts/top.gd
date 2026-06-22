@@ -284,7 +284,7 @@ func _project_tangent(v: Vector3, up: Vector3) -> Vector3:
 	# remove the component along 'up' so the vector stays on the tangent plane
 	return (v - up * v.dot(up)).normalized()
 
-func _spin_decay():
+func _spin_decay() -> void:
 	while(alive):
 		if spin_visual_speed <= 0:
 			alive = false
@@ -315,7 +315,7 @@ func on_enemy_killed() -> void:
 		surface_vel = heading * boosted
 
 func bounce_off(from_pos: Vector3) -> void:
-	spin_visual_speed -= 10
+	lose_spin(10)
 	# rebound away from a contact point (e.g. an enemy we hit too slowly to kill).
 	var up := (global_position - planet_center).normalized()
 	# contact normal in the tangent plane, pointing from the obstacle toward us
@@ -333,6 +333,9 @@ func bounce_off(from_pos: Vector3) -> void:
 	if surface_vel.length() > 0.001:
 		heading = _project_tangent(surface_vel, up)
 
-#func _update_spin_label():
+func lose_spin(amount: float) -> void:
+	spin_visual_speed -= amount
+
+#func _update_spin_label() -> void:
 	#$Camera3D/Label.text = "Speed: " + str(spin_visual_speed)
 	#await get_tree().create_timer(1.5).timeout

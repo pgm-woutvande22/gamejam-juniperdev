@@ -1,0 +1,6 @@
+[gd_scene format=3 uid="uid://c2lxrwpmsnj5o"]
+
+[node name="Tinkercad GLTF Scene" unique_id=686152337]
+
+[node name="Mesh_Mesh_head_geo_001_lambert2SG_001" parent="Node" parent_id_path=PackedInt32Array(2008001631) index="0" unique_id=896282966]
+mesh = null

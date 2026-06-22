@@ -12,6 +12,8 @@
 [ext_resource type="PackedScene" uid="uid://c133gb8dibsto" path="res://assets/3D/Bey.glb" id="11_topgl"]
 [ext_resource type="Shader" uid="uid://b8b58ot4vi24r" path="res://shaders/pixel_planet.gdshader" id="12_pxpl"]
 [ext_resource type="Shader" uid="uid://bm2l4whyugdj7" path="res://shaders/cloud_layer.gdshader" id="13_cloud"]
+[ext_resource type="Shader" path="res://shaders/space_sky.gdshader" id="14_sky"]
+[ext_resource type="Script" path="res://scripts/sky_parallax.gd" id="15_skyp"]
 
 [sub_resource type="SphereShape3D" id="SphereShape3D_pg4a6"]
 
@@ -107,7 +109,23 @@ shader_parameter/morph_amount = 1.0
 shader_parameter/under_shade = 0.55
 shader_parameter/volume_range = 0.25
 
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_sky"]
+shader = ExtResource("14_sky")
+
+[sub_resource type="Sky" id="Sky_bg"]
+sky_material = SubResource("ShaderMaterial_sky")
+
+[sub_resource type="Environment" id="Environment_bg"]
+background_mode = 2
+sky = SubResource("Sky_bg")
+ambient_light_source = 1
+
 [node name="level" type="Node3D" unique_id=738747087]
+
+[node name="WorldEnvironment" type="WorldEnvironment" parent="." unique_id=1564292909]
+environment = SubResource("Environment_bg")
+script = ExtResource("15_skyp")
+parallax = 0.12
 
 [node name="Top" type="CharacterBody3D" parent="." unique_id=1907083630]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 120.80496, 0)

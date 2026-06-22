@@ -75,6 +75,16 @@ shader_parameter/mtn2 = Color(0.765, 0.651, 0.42, 1)
 shader_parameter/mtn3 = Color(0.667, 0.541, 0.322, 1)
 shader_parameter/mtn4 = Color(0.612, 0.475, 0.271, 1)
 shader_parameter/mtn5 = Color(0.71, 0.667, 0.557, 1)
+shader_parameter/cloud_shadow_strength = 0.25
+shader_parameter/cloud_shadow_dir = Vector3(1, 0, 0.6)
+shader_parameter/cloud_shadow_offset = 0.08
+shader_parameter/cloud_pixel_density = 100.0
+shader_parameter/cloud_scale = 4.0
+shader_parameter/cloud_coverage = 0.68
+shader_parameter/cloud_softness = 0.15
+shader_parameter/cloud_speed = 0.02
+shader_parameter/cloud_morph_speed = 0.2
+shader_parameter/cloud_morph_amount = 1.0
 
 [sub_resource type="StandardMaterial3D" id="StandardMaterial3D_dckfn"]
 albedo_texture = ExtResource("3_tas22")
@@ -83,7 +93,7 @@ albedo_texture = ExtResource("3_tas22")
 material = SubResource("StandardMaterial3D_dckfn")
 
 [sub_resource type="ShaderMaterial" id="ShaderMaterial_clouds"]
-render_priority = 0
+render_priority = 1
 shader = ExtResource("13_cloud")
 shader_parameter/cloud_color = Color(0.922, 0.929, 0.914, 1)
 shader_parameter/pixel_density = 100.0
@@ -94,6 +104,8 @@ shader_parameter/opacity = 0.85
 shader_parameter/speed = 0.035
 shader_parameter/morph_speed = 0.2
 shader_parameter/morph_amount = 1.0
+shader_parameter/under_shade = 0.55
+shader_parameter/volume_range = 0.25
 
 [node name="level" type="Node3D" unique_id=738747087]
 

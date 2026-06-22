@@ -9,10 +9,15 @@ extends CharacterBody3D
 @export var full_speed_distance: float = 6.0 # cursor distance (surface units) at which you hit top speed; closer = slower
 @export var accel_speed: float = 8.0         # acceleration (units/sec^2): caps how fast speed AND direction can change; lower = more elastic
 @export var friction: float = 2.0            # how quickly it coasts to a stop when you let go (lower = longer glide)
+@export var bounce_strength: float = 2.5     # multiplier on the rebound velocity off an enemy (higher = more violent)
+@export var bounce_min_speed: float = 0.0    # guaranteed rebound speed (units/sec); 0 = use move_speed * 1.5
 @export var spin_visual_speed: float = 1080.0 # deg/sec, purely cosmetic
 @export var dash_distance: float = 12.0      # max surface distance a single dash covers
 @export var dash_duration: float = 0.18      # how long the dash burst lasts (lower = snappier)
 @export var dash_cooldown: float = 0.6       # min time between dashes
+@export var kill_boost_speed: float = 14.0   # forward momentum added each time you kill an enemy
+@export var kill_boost_max: float = 90.0     # cap on boosted speed so chains can't run away forever
+@export_range(0.0, 1.0) var kill_dash_refund: float = 0.2  # fraction of the dash cooldown refunded per kill
 @export var dash_particles_path: NodePath    # optional GPUParticles3D trail dropped behind the top while dashing
 @export var dash_colors: Array[Color] = []   # palette tinted into the trail per dash; empty = random hue
 @export var dash_indicator_path: NodePath    # optional flat ring (PlaneMesh + dash_indicator.gdshader) showing cooldown
@@ -29,6 +34,7 @@ var dash_time_left: float = 0.0              # >0 while a dash is in progress
 var dash_cooldown_left: float = 0.0          # >0 while dash is recharging
 var dash_axis: Vector3 = Vector3.ZERO        # fixed great-circle axis the active dash rotates around
 var dash_angular_speed: float = 0.0          # radians/sec the active dash rotates the position vector
+var dash_exit_speed: float = 0.0             # surface speed carried out of the dash; raised by kills to chain
 var prev_rmb: bool = false                   # last frame's right-mouse state, for edge detection
 
 @onready var mesh: Node3D = $TopMesh
@@ -81,8 +87,9 @@ func _physics_process(delta: float) -> void:
 		global_position = planet_center + p.normalized() * radius
 		up = (global_position - planet_center).normalized()
 		# carry momentum out of the dash so it eases back into normal movement
+		# (dash_exit_speed starts at move_speed but is bumped up by chained kills)
 		heading = _project_tangent(dash_axis.cross(up), up)
-		surface_vel = heading * move_speed
+		surface_vel = heading * dash_exit_speed
 		global_transform.basis = Basis.looking_at(heading, up)
 		mesh.rotate_object_local(Vector3.UP, deg_to_rad(spin_visual_speed) * delta)
 		_set_trail(true)   # always trail while dashing
@@ -216,6 +223,7 @@ func _start_dash(up: Vector3) -> void:
 	dash_angular_speed = total_angle / maxf(dash_duration, 0.001)
 	dash_time_left = dash_duration
 	dash_cooldown_left = dash_cooldown
+	dash_exit_speed = move_speed   # reset; chained kills raise this for the rest of the dash
 
 func _update_camera(up: Vector3) -> void:
 	# keep the top centered every frame, but recenter IMMEDIATELY (no smoothing). a lagging camera
@@ -268,6 +276,45 @@ func _cursor_planet_point() -> Variant:
 	if t < 0.0:
 		return null
 	return o + d * t
+
+func get_surface_speed() -> float:
+	# current speed along the surface (units/sec). during a dash, report the dash's true
+	# speed rather than the carried-out momentum, so dashing can hit an enemy's kill threshold.
+	if dash_time_left > 0.0:
+		return dash_angular_speed * radius
+	return surface_vel.length()
+
+func on_enemy_killed() -> void:
+	# reward kills with forward momentum so they chain: each kill speeds you up (capped), and
+	# optionally refreshes the dash so you can immediately lunge at the next enemy.
+	# refund part of the dash cooldown so kills shorten the wait for the next dash
+	dash_cooldown_left = maxf(dash_cooldown_left - dash_cooldown * kill_dash_refund, 0.0)
+	if dash_time_left > 0.0:
+		# mid-dash: snowball the dash so one lunge can plow through a line of enemies
+		dash_exit_speed = minf(dash_exit_speed + kill_boost_speed, kill_boost_max)
+		dash_angular_speed = dash_exit_speed / radius
+	else:
+		# killed while running: inject the boost as straight-ahead momentum
+		var boosted := minf(get_surface_speed() + kill_boost_speed, kill_boost_max)
+		surface_vel = heading * boosted
+
+func bounce_off(from_pos: Vector3) -> void:
+	# rebound away from a contact point (e.g. an enemy we hit too slowly to kill).
+	var up := (global_position - planet_center).normalized()
+	# contact normal in the tangent plane, pointing from the obstacle toward us
+	var normal := _project_tangent(global_position - from_pos, up)
+	if normal == Vector3.ZERO:
+		normal = -heading
+	dash_time_left = 0.0                       # cancel any active dash so the bounce isn't ignored
+	# reflect velocity off the contact, then amplify it for a violent knockback
+	surface_vel = surface_vel.bounce(normal) * bounce_strength
+	# guarantee a strong outward push even if we were nearly stopped on impact
+	var min_push := bounce_min_speed if bounce_min_speed > 0.0 else move_speed * 1.5
+	var outward := surface_vel.dot(normal)
+	if outward < min_push:
+		surface_vel += normal * (min_push - outward)
+	if surface_vel.length() > 0.001:
+		heading = _project_tangent(surface_vel, up)
 
 func _project_tangent(v: Vector3, up: Vector3) -> Vector3:
 	# remove the component along 'up' so the vector stays on the tangent plane

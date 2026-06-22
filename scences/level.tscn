@@ -4,6 +4,7 @@
 [ext_resource type="Shader" uid="uid://c7yhsbhudabf" path="res://shaders/dash_indicator.gdshader" id="2_7l045"]
 [ext_resource type="Texture2D" uid="uid://ch8qa1kx5775f" path="res://assets/CustomUVChecker_byValle_1K.png" id="2_qi052"]
 [ext_resource type="Texture2D" uid="uid://bwldoqvfdpq56" path="res://assets/testy.png" id="3_tas22"]
+[ext_resource type="PackedScene" uid="uid://dyihxt88e4143" path="res://scences/enemy.tscn" id="5_cq5gf"]
 
 [sub_resource type="StandardMaterial3D" id="StandardMaterial3D_qi052"]
 albedo_color = Color(18.892157, 18.892157, 18.892157, 1)
@@ -74,9 +75,11 @@ light_path = NodePath("DirectionalLight3D")
 radius = 10.0
 move_speed = 30.0
 turn_speed = 20.0
-accel_speed = 20.0
+accel_speed = 50.0
 friction = 1.0
-dash_distance = 10.0
+bounce_strength = 1.0
+dash_distance = 20.0
+dash_duration = 0.2
 dash_cooldown = 2.0
 dash_particles_path = NodePath("DashParticles")
 dash_colors = Array[Color]([Color(1, 1, 1, 1), Color(1, 0, 0, 1), Color(0.9801654, 0.05025994, 0.3236682, 1), Color(0.9880797, 0.3052566, 0.040456824, 1)])
@@ -114,3 +117,123 @@ mesh = SubResource("QuadMesh_pg4a6")
 transform = Transform3D(100, 0, 0, 0, 100, 0, 0, 0, 100, 0, 0, 0)
 material_override = SubResource("StandardMaterial3D_cq5gf")
 mesh = SubResource("SphereMesh_0k001")
+
+[node name="Enemy" parent="." unique_id=1990566202 instance=ExtResource("5_cq5gf")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 144.296, 0, 8.775665)
+kill_threshold = 40.0
+max_health = 45.0
+
+[node name="Enemy2" parent="." unique_id=287539789 instance=ExtResource("5_cq5gf")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 144.296, 0, 26.511337)
+kill_threshold = 40.0
+max_health = 45.0
+
+[node name="Enemy3" parent="." unique_id=1882158499 instance=ExtResource("5_cq5gf")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 144.296, 0, 44.491173)
+kill_threshold = 40.0
+max_health = 45.0
+
+[node name="Enemy4" parent="." unique_id=545214108 instance=ExtResource("5_cq5gf")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 144.296, 0, 61.233177)
+kill_threshold = 40.0
+max_health = 45.0
+
+[node name="Enemy5" parent="." unique_id=2005513211 instance=ExtResource("5_cq5gf")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -89.35745, 0, 8.775665)
+kill_threshold = 40.0
+max_health = 45.0
+
+[node name="Enemy6" parent="." unique_id=844581518 instance=ExtResource("5_cq5gf")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -89.35745, 0, 26.511337)
+kill_threshold = 40.0
+max_health = 45.0
+
+[node name="Enemy7" parent="." unique_id=1492513779 instance=ExtResource("5_cq5gf")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -89.35745, 0, 44.491173)
+kill_threshold = 40.0
+max_health = 45.0
+
+[node name="Enemy8" parent="." unique_id=1761328136 instance=ExtResource("5_cq5gf")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -89.35745, 0, 61.233177)
+kill_threshold = 40.0
+max_health = 45.0
+
+[node name="Enemy9" parent="." unique_id=1567966061 instance=ExtResource("5_cq5gf")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -89.35745, -68.094894, 8.775665)
+kill_threshold = 40.0
+max_health = 45.0
+
+[node name="Enemy10" parent="." unique_id=2046119081 instance=ExtResource("5_cq5gf")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -89.35745, -68.094894, 26.511337)
+kill_threshold = 40.0
+max_health = 45.0
+
+[node name="Enemy11" parent="." unique_id=666721095 instance=ExtResource("5_cq5gf")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -89.35745, -68.094894, 44.491173)
+kill_threshold = 40.0
+max_health = 45.0
+
+[node name="Enemy12" parent="." unique_id=2097714732 instance=ExtResource("5_cq5gf")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -89.35745, -68.094894, 61.233177)
+kill_threshold = 40.0
+max_health = 45.0
+
+[node name="Enemy13" parent="." unique_id=668316906 instance=ExtResource("5_cq5gf")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -12.283089, -68.094894, 8.775665)
+kill_threshold = 40.0
+max_health = 45.0
+
+[node name="Enemy14" parent="." unique_id=682606780 instance=ExtResource("5_cq5gf")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -12.283089, -68.094894, 26.511337)
+kill_threshold = 40.0
+max_health = 45.0
+
+[node name="Enemy15" parent="." unique_id=707388994 instance=ExtResource("5_cq5gf")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -12.283089, -68.094894, 44.491173)
+kill_threshold = 40.0
+max_health = 45.0
+
+[node name="Enemy16" parent="." unique_id=469848449 instance=ExtResource("5_cq5gf")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -12.283089, -68.094894, 61.233177)
+kill_threshold = 40.0
+max_health = 45.0
+
+[node name="Enemy17" parent="." unique_id=434970720 instance=ExtResource("5_cq5gf")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 68.48247, -68.094894, 8.775665)
+kill_threshold = 40.0
+max_health = 45.0
+
+[node name="Enemy18" parent="." unique_id=720212186 instance=ExtResource("5_cq5gf")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 68.48247, -68.094894, 26.511337)
+kill_threshold = 40.0
+max_health = 45.0
+
+[node name="Enemy19" parent="." unique_id=1596122948 instance=ExtResource("5_cq5gf")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 68.48247, -68.094894, 44.491173)
+kill_threshold = 40.0
+max_health = 45.0
+
+[node name="Enemy20" parent="." unique_id=709325459 instance=ExtResource("5_cq5gf")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 68.48247, -68.094894, 61.233177)
+kill_threshold = 40.0
+max_health = 45.0
+
+[node name="Enemy21" parent="." unique_id=242480642 instance=ExtResource("5_cq5gf")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 135.27145, -68.094894, 8.775665)
+kill_threshold = 40.0
+max_health = 45.0
+
+[node name="Enemy22" parent="." unique_id=844032535 instance=ExtResource("5_cq5gf")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 135.27145, -68.094894, 26.511337)
+kill_threshold = 40.0
+max_health = 45.0
+
+[node name="Enemy23" parent="." unique_id=373582582 instance=ExtResource("5_cq5gf")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 135.27145, -68.094894, 44.491173)
+kill_threshold = 40.0
+max_health = 45.0
+
+[node name="Enemy24" parent="." unique_id=179947856 instance=ExtResource("5_cq5gf")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 135.27145, -68.094894, 61.233177)
+kill_threshold = 40.0
+max_health = 45.0

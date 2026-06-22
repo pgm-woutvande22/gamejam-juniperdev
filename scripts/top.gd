@@ -89,7 +89,8 @@ func _physics_process(delta: float) -> void:
 		# (dash_exit_speed starts at move_speed but is bumped up by chained kills)
 		heading = _project_tangent(dash_axis.cross(up), up)
 		surface_vel = heading * dash_exit_speed
-		global_transform.basis = Basis.looking_at(heading, up)
+		# face the stable view_dir, not the dash heading, so dashing doesn't spin the body
+		global_transform.basis = Basis.looking_at(view_dir, up)
 		mesh.rotate_object_local(Vector3.UP, deg_to_rad(spin_visual_speed) * delta)
 		_set_trail(true)   # always trail while dashing
 		_update_camera(up)
@@ -136,8 +137,10 @@ func _physics_process(delta: float) -> void:
 		surface_vel = surface_vel.rotated(move_axis, angle)   # parallel-transport along the path
 		heading = surface_vel.normalized()
 
-	# --- orient the top: local up = surface normal, local -Z = heading ---
-	global_transform.basis = Basis.looking_at(heading, up)
+	# --- orient the top: local up = surface normal. keep facing along the stable view_dir
+	#     (NOT heading) so the body stays glued to the surface but doesn't yaw to face the
+	#     cursor — it slides toward the mouse without rotating to point at it. ---
+	global_transform.basis = Basis.looking_at(view_dir, up)
 
 	# --- spin the visual mesh around its own up ---
 	mesh.rotate_object_local(Vector3.UP, deg_to_rad(spin_visual_speed) * delta)

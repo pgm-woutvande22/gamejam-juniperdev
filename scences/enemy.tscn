@@ -14,6 +14,7 @@ planet_path = NodePath("../Planet")
 target_path = NodePath("../Top")
 type = ExtResource("2_dxi00")
 damage_number_scene = ExtResource("3_dmgn")
+damage = 10
 
 [node name="EnemyMesh" type="Sprite3D" parent="." unique_id=732981004]
 transform = Transform3D(0.5, 0, 0, 0, 0.5, 0, 0, 0, 0.5, 0, 0, 0)

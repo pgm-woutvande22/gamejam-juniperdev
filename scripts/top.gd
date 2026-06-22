@@ -42,6 +42,9 @@ var prev_rmb: bool = false                   # last frame's right-mouse state, f
 @onready var dash_particles: GPUParticles3D = get_node_or_null(dash_particles_path)
 @onready var dash_indicator: MeshInstance3D = get_node_or_null(dash_indicator_path)
 
+@export var alive: bool = true
+@export var lifesteal: int = 30
+
 func _ready() -> void:
 	var planet := get_node(planet_path)
 	planet_center = planet.global_position
@@ -60,6 +63,10 @@ func _ready() -> void:
 	_setup_dash_colors()
 	_update_camera(up)
 	_update_light(up)
+	_spin_decay()
+
+#func _process(delta: float) -> void:
+	#_update_spin_label()
 
 func _physics_process(delta: float) -> void:
 	var up := (global_position - planet_center).normalized()
@@ -273,6 +280,18 @@ func _cursor_planet_point() -> Variant:
 		return null
 	return o + d * t
 
+func _project_tangent(v: Vector3, up: Vector3) -> Vector3:
+	# remove the component along 'up' so the vector stays on the tangent plane
+	return (v - up * v.dot(up)).normalized()
+
+func _spin_decay() -> void:
+	while(alive):
+		if spin_visual_speed <= 0:
+			alive = false
+			break
+		spin_visual_speed -= 10
+		await get_tree().create_timer(1.5).timeout
+
 func get_surface_speed() -> float:
 	# current speed along the surface (units/sec). during a dash, report the dash's true
 	# speed rather than the carried-out momentum, so dashing can hit an enemy's kill threshold.
@@ -285,6 +304,7 @@ func on_enemy_killed() -> void:
 	# optionally refreshes the dash so you can immediately lunge at the next enemy.
 	# refund part of the dash cooldown so kills shorten the wait for the next dash
 	dash_cooldown_left = maxf(dash_cooldown_left - dash_cooldown * kill_dash_refund, 0.0)
+	spin_visual_speed += lifesteal
 	if dash_time_left > 0.0:
 		# mid-dash: snowball the dash so one lunge can plow through a line of enemies
 		dash_exit_speed = minf(dash_exit_speed + kill_boost_speed, kill_boost_max)
@@ -294,7 +314,8 @@ func on_enemy_killed() -> void:
 		var boosted := minf(get_surface_speed() + kill_boost_speed, kill_boost_max)
 		surface_vel = heading * boosted
 
-func bounce_off(from_pos: Vector3) -> void:
+func bounce_off(from_pos: Vector3, damage: int) -> void:
+	lose_spin(damage)
 	# rebound away from a contact point (e.g. an enemy we hit too slowly to kill).
 	var up := (global_position - planet_center).normalized()
 	# contact normal in the tangent plane, pointing from the obstacle toward us
@@ -312,6 +333,9 @@ func bounce_off(from_pos: Vector3) -> void:
 	if surface_vel.length() > 0.001:
 		heading = _project_tangent(surface_vel, up)
 
-func _project_tangent(v: Vector3, up: Vector3) -> Vector3:
-	# remove the component along 'up' so the vector stays on the tangent plane
-	return (v - up * v.dot(up)).normalized()
+func lose_spin(amount: float) -> void:
+	spin_visual_speed -= amount
+
+#func _update_spin_label() -> void:
+	#$Camera3D/Label.text = "Speed: " + str(spin_visual_speed)
+	#await get_tree().create_timer(1.5).timeout

@@ -9,11 +9,30 @@
 [ext_resource type="Resource" uid="uid://8vjdnbm3r6ym" path="res://enemy_types/crab.tres" id="8_gmcrc"]
 [ext_resource type="Resource" uid="uid://gex2xifpuho7" path="res://enemy_types/charger.tres" id="9_nskur"]
 [ext_resource type="Resource" uid="uid://cpc00rv3kk0mo" path="res://enemy_types/grunt.tres" id="10_olo2r"]
-[ext_resource type="PackedScene" uid="uid://c133gb8dibsto" path="res://assets/3D/Bey.glb" id="11_topgl"]
+[ext_resource type="Texture2D" uid="uid://dwixlq3s111kx" path="res://assets/Bey.png" id="11_topgl"]
 [ext_resource type="Shader" uid="uid://b8b58ot4vi24r" path="res://shaders/pixel_planet.gdshader" id="12_pxpl"]
 [ext_resource type="Shader" uid="uid://bm2l4whyugdj7" path="res://shaders/cloud_layer.gdshader" id="13_cloud"]
-[ext_resource type="Shader" path="res://shaders/space_sky.gdshader" id="14_sky"]
-[ext_resource type="Script" path="res://scripts/sky_parallax.gd" id="15_skyp"]
+[ext_resource type="Shader" uid="uid://dhs2rlp05a6i4" path="res://shaders/space_sky.gdshader" id="14_sky"]
+[ext_resource type="Script" uid="uid://cseppau2e1ikb" path="res://scripts/sky_parallax.gd" id="15_skyp"]
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_sky"]
+shader = ExtResource("14_sky")
+shader_parameter/horizon_color = Color(0.06, 0.05, 0.12, 1)
+shader_parameter/zenith_color = Color(0.02, 0.02, 0.05, 1)
+shader_parameter/star_scale = 220.0
+shader_parameter/star_density = 0.03
+shader_parameter/star_brightness = 1.0
+shader_parameter/star_color = Color(1, 1, 1, 1)
+shader_parameter/twinkle_speed = 1.5
+shader_parameter/sky_rot = Basis(1, 0, 0, 0, 1, 0, 0, 0, 1)
+
+[sub_resource type="Sky" id="Sky_bg"]
+sky_material = SubResource("ShaderMaterial_sky")
+
+[sub_resource type="Environment" id="Environment_bg"]
+background_mode = 2
+sky = SubResource("Sky_bg")
+ambient_light_source = 1
 
 [sub_resource type="SphereShape3D" id="SphereShape3D_pg4a6"]
 
@@ -109,17 +128,6 @@ shader_parameter/morph_amount = 1.0
 shader_parameter/under_shade = 0.55
 shader_parameter/volume_range = 0.25
 
-[sub_resource type="ShaderMaterial" id="ShaderMaterial_sky"]
-shader = ExtResource("14_sky")
-
-[sub_resource type="Sky" id="Sky_bg"]
-sky_material = SubResource("ShaderMaterial_sky")
-
-[sub_resource type="Environment" id="Environment_bg"]
-background_mode = 2
-sky = SubResource("Sky_bg")
-ambient_light_source = 1
-
 [node name="level" type="Node3D" unique_id=738747087]
 
 [node name="WorldEnvironment" type="WorldEnvironment" parent="." unique_id=1564292909]
@@ -142,7 +150,7 @@ dash_distance = 20.0
 dash_duration = 0.2
 dash_cooldown = 2.0
 dash_particles_path = NodePath("DashParticles")
-dash_colors = Array[Color]([Color(1, 1, 1, 1), Color(1, 0, 0, 1), Color(0.9801654, 0.05025994, 0.3236682, 1), Color(0.9880797, 0.3052566, 0.040456824, 1)])
+dash_colors = Array[Color]([Color(1, 1, 1, 1), Color(0.4509804, 0.6509804, 0.25882354, 1), Color(0.8392157, 0.8745098, 0.5803922, 1), Color(0.22352941, 0.28627452, 0.32156864, 1)])
 dash_indicator_path = NodePath("DashIndicator")
 camera_distance = 35.0
 camera_pitch_deg = 89.0
@@ -153,8 +161,13 @@ transform = Transform3D(1, 0, 0, 0, 0.894427, 0.447214, 0, -0.447214, 0.894427, 
 [node name="DirectionalLight3D" type="DirectionalLight3D" parent="Top" unique_id=1564292907]
 transform = Transform3D(0.7071068, 0.35355324, -0.6123725, 0, 0.86602557, 0.49999976, 0.7071068, -0.35355324, 0.6123725, 0, 13.953394, 0)
 
-[node name="TopMesh" parent="Top" unique_id=1622821032 instance=ExtResource("11_topgl")]
-transform = Transform3D(1.98, 0, 0, 0, 1, 0, 0, 0, 1.98, -0.008776516, 0, -0.0051070675)
+[node name="TopMesh" type="Node3D" parent="Top" unique_id=1622821032]
+
+[node name="BeyMesh" type="Sprite3D" parent="Top/TopMesh" unique_id=1622821033]
+transform = Transform3D(1, 0, 0, 0, 0, -1, 0, 1, 0, 0, 1.5, 0)
+pixel_size = 0.1
+texture_filter = 0
+texture = ExtResource("11_topgl")
 
 [node name="CollisionShape3D" type="CollisionShape3D" parent="Top" unique_id=1850111559]
 shape = SubResource("SphereShape3D_pg4a6")
@@ -169,7 +182,7 @@ process_material = SubResource("ParticleProcessMaterial_tas22")
 draw_pass_1 = SubResource("QuadMesh_tas22")
 
 [node name="DashIndicator" type="MeshInstance3D" parent="Top" unique_id=1332331279]
-transform = Transform3D(2, 0, 0, 0, -8.742278e-08, 2, 0, -2, -8.742278e-08, 0, 3.033493, 0)
+transform = Transform3D(4.22, 0, 0, 0, -1.8446205e-07, 4.22, 0, -4.22, -1.8446205e-07, 0, 2.033493, 0)
 mesh = SubResource("QuadMesh_pg4a6")
 
 [node name="Planet" type="MeshInstance3D" parent="." unique_id=1564292905]

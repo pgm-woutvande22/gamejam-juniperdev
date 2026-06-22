@@ -2,7 +2,6 @@
 
 [ext_resource type="Script" uid="uid://cr1pdrt4vamyh" path="res://scripts/top.gd" id="1_dckfn"]
 [ext_resource type="Shader" uid="uid://c7yhsbhudabf" path="res://shaders/dash_indicator.gdshader" id="2_7l045"]
-[ext_resource type="Texture2D" uid="uid://ch8qa1kx5775f" path="res://assets/CustomUVChecker_byValle_1K.png" id="2_qi052"]
 [ext_resource type="Texture2D" uid="uid://bwldoqvfdpq56" path="res://assets/testy.png" id="3_tas22"]
 [ext_resource type="PackedScene" uid="uid://dyihxt88e4143" path="res://scences/enemy.tscn" id="5_cq5gf"]
 [ext_resource type="PackedScene" uid="uid://b8spwnr0enmy1" path="res://scences/spawner.tscn" id="6_3irxl"]
@@ -10,14 +9,11 @@
 [ext_resource type="Resource" uid="uid://8vjdnbm3r6ym" path="res://enemy_types/crab.tres" id="8_gmcrc"]
 [ext_resource type="Resource" uid="uid://gex2xifpuho7" path="res://enemy_types/charger.tres" id="9_nskur"]
 [ext_resource type="Resource" uid="uid://cpc00rv3kk0mo" path="res://enemy_types/grunt.tres" id="10_olo2r"]
-
-[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_qi052"]
-albedo_color = Color(18.892157, 18.892157, 18.892157, 1)
-metallic = 1.0
-metallic_specular = 0.27
-
-[sub_resource type="BoxMesh" id="BoxMesh_7l045"]
-material = SubResource("StandardMaterial3D_qi052")
+[ext_resource type="PackedScene" uid="uid://c133gb8dibsto" path="res://assets/3D/Bey.glb" id="11_topgl"]
+[ext_resource type="Shader" uid="uid://b8b58ot4vi24r" path="res://shaders/pixel_planet.gdshader" id="12_pxpl"]
+[ext_resource type="Shader" uid="uid://bm2l4whyugdj7" path="res://shaders/cloud_layer.gdshader" id="13_cloud"]
+[ext_resource type="Shader" path="res://shaders/space_sky.gdshader" id="14_sky"]
+[ext_resource type="Script" path="res://scripts/sky_parallax.gd" id="15_skyp"]
 
 [sub_resource type="SphereShape3D" id="SphereShape3D_pg4a6"]
 
@@ -60,8 +56,37 @@ shader_parameter/edge_softness = 0.02
 [sub_resource type="QuadMesh" id="QuadMesh_pg4a6"]
 material = SubResource("ShaderMaterial_mjhmi")
 
-[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_cq5gf"]
-albedo_texture = ExtResource("2_qi052")
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_planet"]
+render_priority = 0
+shader = ExtResource("12_pxpl")
+shader_parameter/pixel_density = 100.0
+shader_parameter/edge_sharpness = 0.012
+shader_parameter/continent_scale = 1.9
+shader_parameter/sea_level = 0.46
+shader_parameter/warp = 0.45
+shader_parameter/seed = 0.0
+shader_parameter/water0 = Color(0.557, 0.749, 0.898, 1)
+shader_parameter/water1 = Color(0.631, 0.816, 0.949, 1)
+shader_parameter/water2 = Color(0.722, 0.882, 0.98, 1)
+shader_parameter/land0 = Color(0.58, 0.741, 0.537, 1)
+shader_parameter/land1 = Color(0.655, 0.769, 0.553, 1)
+shader_parameter/land2 = Color(0.737, 0.792, 0.58, 1)
+shader_parameter/mtn0 = Color(0.902, 0.875, 0.702, 1)
+shader_parameter/mtn1 = Color(0.914, 0.843, 0.659, 1)
+shader_parameter/mtn2 = Color(0.765, 0.651, 0.42, 1)
+shader_parameter/mtn3 = Color(0.667, 0.541, 0.322, 1)
+shader_parameter/mtn4 = Color(0.612, 0.475, 0.271, 1)
+shader_parameter/mtn5 = Color(0.71, 0.667, 0.557, 1)
+shader_parameter/cloud_shadow_strength = 0.25
+shader_parameter/cloud_shadow_dir = Vector3(1, 0, 0.6)
+shader_parameter/cloud_shadow_offset = 0.08
+shader_parameter/cloud_pixel_density = 100.0
+shader_parameter/cloud_scale = 3.0
+shader_parameter/cloud_coverage = 0.62
+shader_parameter/cloud_softness = 0.06
+shader_parameter/cloud_speed = 0.035
+shader_parameter/cloud_morph_speed = 0.2
+shader_parameter/cloud_morph_amount = 1.0
 
 [sub_resource type="StandardMaterial3D" id="StandardMaterial3D_dckfn"]
 albedo_texture = ExtResource("3_tas22")
@@ -69,7 +94,38 @@ albedo_texture = ExtResource("3_tas22")
 [sub_resource type="SphereMesh" id="SphereMesh_0k001"]
 material = SubResource("StandardMaterial3D_dckfn")
 
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_clouds"]
+render_priority = 1
+shader = ExtResource("13_cloud")
+shader_parameter/cloud_color = Color(0.922, 0.929, 0.914, 1)
+shader_parameter/pixel_density = 100.0
+shader_parameter/cloud_scale = 3.0
+shader_parameter/coverage = 0.62
+shader_parameter/softness = 0.06
+shader_parameter/opacity = 0.85
+shader_parameter/speed = 0.035
+shader_parameter/morph_speed = 0.2
+shader_parameter/morph_amount = 1.0
+shader_parameter/under_shade = 0.55
+shader_parameter/volume_range = 0.25
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_sky"]
+shader = ExtResource("14_sky")
+
+[sub_resource type="Sky" id="Sky_bg"]
+sky_material = SubResource("ShaderMaterial_sky")
+
+[sub_resource type="Environment" id="Environment_bg"]
+background_mode = 2
+sky = SubResource("Sky_bg")
+ambient_light_source = 1
+
 [node name="level" type="Node3D" unique_id=738747087]
+
+[node name="WorldEnvironment" type="WorldEnvironment" parent="." unique_id=1564292909]
+environment = SubResource("Environment_bg")
+script = ExtResource("15_skyp")
+parallax = 0.12
 
 [node name="Top" type="CharacterBody3D" parent="." unique_id=1907083630]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 120.80496, 0)
@@ -97,9 +153,8 @@ transform = Transform3D(1, 0, 0, 0, 0.894427, 0.447214, 0, -0.447214, 0.894427, 
 [node name="DirectionalLight3D" type="DirectionalLight3D" parent="Top" unique_id=1564292907]
 transform = Transform3D(0.7071068, 0.35355324, -0.6123725, 0, 0.86602557, 0.49999976, 0.7071068, -0.35355324, 0.6123725, 0, 13.953394, 0)
 
-[node name="TopMesh" type="MeshInstance3D" parent="Top" unique_id=2067627049]
-transform = Transform3D(2, 0, 0, 0, 2, 0, 0, 0, 2, 0, 0, 0)
-mesh = SubResource("BoxMesh_7l045")
+[node name="TopMesh" parent="Top" unique_id=1622821032 instance=ExtResource("11_topgl")]
+transform = Transform3D(1.98, 0, 0, 0, 1, 0, 0, 0, 1.98, -0.008776516, 0, -0.0051070675)
 
 [node name="CollisionShape3D" type="CollisionShape3D" parent="Top" unique_id=1850111559]
 shape = SubResource("SphereShape3D_pg4a6")
@@ -119,7 +174,12 @@ mesh = SubResource("QuadMesh_pg4a6")
 
 [node name="Planet" type="MeshInstance3D" parent="." unique_id=1564292905]
 transform = Transform3D(100, 0, 0, 0, 100, 0, 0, 0, 100, 0, 0, 0)
-material_override = SubResource("StandardMaterial3D_cq5gf")
+material_override = SubResource("ShaderMaterial_planet")
+mesh = SubResource("SphereMesh_0k001")
+
+[node name="CloudLayer" type="MeshInstance3D" parent="." unique_id=1564292908]
+transform = Transform3D(111.507416, 0, 0, 0, 111.507416, 0, 0, 0, 111.507416, 0, 0, 0)
+material_override = SubResource("ShaderMaterial_clouds")
 mesh = SubResource("SphereMesh_0k001")
 
 [node name="Spawner" parent="." unique_id=1257519610 instance=ExtResource("6_3irxl")]

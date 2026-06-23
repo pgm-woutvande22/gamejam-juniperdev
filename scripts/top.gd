@@ -361,3 +361,6 @@ func bounce_off(from_pos: Vector3, damage: int) -> void:
 
 func lose_spin(amount: float) -> void:
 	spin_visual_speed -= amount
+
+func get_current_spin_speed() -> int:
+	return spin_visual_speed

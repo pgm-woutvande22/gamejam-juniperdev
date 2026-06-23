@@ -1,0 +1,29 @@
+[gd_scene format=3 uid="uid://chv7kejbcp0m3"]
+
+[sub_resource type="LabelSettings" id="LabelSettings_eyctd"]
+font_size = 35
+
+[sub_resource type="LabelSettings" id="LabelSettings_ygwbq"]
+font_size = 35
+
+[node name="BeyStats" type="CanvasLayer" unique_id=954660751]
+
+[node name="RPM" type="Label" parent="." unique_id=1490159776]
+offset_left = 1536.0
+offset_top = 1008.0
+offset_right = 1896.0
+offset_bottom = 1057.0
+text = "RPM: "
+label_settings = SubResource("LabelSettings_eyctd")
+horizontal_alignment = 2
+vertical_alignment = 1
+
+[node name="Speed" type="Label" parent="." unique_id=1634683618]
+offset_left = 1536.0
+offset_top = 944.0
+offset_right = 1888.0
+offset_bottom = 993.0
+text = "Speed:"
+label_settings = SubResource("LabelSettings_ygwbq")
+horizontal_alignment = 2
+vertical_alignment = 1

@@ -16,7 +16,9 @@
 [ext_resource type="Script" uid="uid://cseppau2e1ikb" path="res://scripts/sky_parallax.gd" id="15_skyp"]
 [ext_resource type="PackedScene" uid="uid://cvydbxdm3krw4" path="res://scences/pause_menu.tscn" id="16_pause"]
 [ext_resource type="PackedScene" uid="uid://cujvcacyheqap" path="res://boss.tscn" id="17_boss"]
+[ext_resource type="PackedScene" uid="uid://chv7kejbcp0m3" path="res://scences/bey_stats.tscn" id="18_bg8nh"]
 [ext_resource type="PackedScene" uid="uid://dwavehud00hud" path="res://scences/wave_hud.tscn" id="18_hud"]
+[ext_resource type="Script" uid="uid://87oj2pwbwcbk" path="res://scripts/bey_stats.gd" id="19_jodta"]
 
 [sub_resource type="ShaderMaterial" id="ShaderMaterial_sky"]
 shader = ExtResource("14_sky")
@@ -68,9 +70,9 @@ size = Vector2(0.2, 0.2)
 render_priority = 0
 shader = ExtResource("2_7l045")
 shader_parameter/progress = 0.0
-shader_parameter/fill_color = Color(0, 0.9868271, 0.94930786, 1)
+shader_parameter/fill_color = Color(1, 0.14509805, 0.3529412, 1)
 shader_parameter/empty_color = Color(1, 1, 1, 0.12)
-shader_parameter/ready_color = Color(1, 0.14590883, 0.35124445, 1)
+shader_parameter/ready_color = Color(0, 0.9882353, 0.9490196, 1)
 shader_parameter/inner_radius = 0.78
 shader_parameter/outer_radius = 0.96
 shader_parameter/edge_softness = 0.02
@@ -238,4 +240,8 @@ enemy_health_growth = 1.3
 
 [node name="PauseMenu" parent="." unique_id=1518043009 instance=ExtResource("16_pause")]
 
-[node name="WaveHUD" parent="." instance=ExtResource("18_hud")]
+[node name="WaveHUD" parent="." unique_id=1922402079 instance=ExtResource("18_hud")]
+
+[node name="BeyStats" parent="." unique_id=954660751 node_paths=PackedStringArray("bey") instance=ExtResource("18_bg8nh")]
+script = ExtResource("19_jodta")
+bey = NodePath("../Top")

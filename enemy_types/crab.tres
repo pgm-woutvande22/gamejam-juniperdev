@@ -6,8 +6,8 @@
 [resource]
 script = ExtResource("1")
 type_name = "Crab"
-kill_threshold = 35.0
-max_health = 40.0
+kill_threshold = 30.0
+max_health = 20.0
 score = 150
 move_speed = 16.0
 chase_range = 65.0

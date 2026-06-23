@@ -1,0 +1,26 @@
+[gd_scene load_steps=6 format=3 uid="uid://cujvcacyheqap"]
+
+[ext_resource type="Script" path="res://scripts/boss.gd" id="1_boss"]
+[ext_resource type="Texture2D" uid="uid://b54ia4hq0xv7a" path="res://assets/KingCrab.png" id="2_king"]
+[ext_resource type="Resource" uid="uid://c8kqr4n1bcrab" path="res://enemy_types/king_crab.tres" id="3_type"]
+[ext_resource type="PackedScene" uid="uid://cdmgnum00pop1" path="res://scences/damage_number.tscn" id="4_dmgn"]
+
+[sub_resource type="SphereShape3D" id="SphereShape3D_boss"]
+radius = 8.0
+
+[node name="Boss" type="CharacterBody3D"]
+script = ExtResource("1_boss")
+planet_path = NodePath("../Planet")
+target_path = NodePath("../Top")
+type = ExtResource("3_type")
+damage_number_scene = ExtResource("4_dmgn")
+damage = 15
+
+[node name="EnemyMesh" type="Sprite3D" parent="."]
+pixel_size = 0.12
+billboard = 1
+texture_filter = 0
+texture = ExtResource("2_king")
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="."]
+shape = SubResource("SphereShape3D_boss")

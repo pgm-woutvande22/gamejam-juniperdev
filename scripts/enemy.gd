@@ -32,6 +32,12 @@ signal died(enemy: Node, score: int)   # emitted on death; connect in the level 
 @export var surface_offset: float = 0.0        # extra lift above the auto "rest on surface" height
 @export var face_player: bool = true           # flip the sprite horizontally to look toward the Top
 
+@export_group("Difficulty scaling (set by the spawner)")
+# Layered on TOP of the type's stats so enemies start at their base and grow over a run.
+# 1.0 = unchanged. The spawner bumps these per wave (see scripts/spawner.gd).
+@export var health_mult: float = 1.0           # multiplies max_health after the type is applied
+@export var threshold_mult: float = 1.0        # multiplies kill_threshold (higher = harder to one-shot)
+
 @export_group("Damage numbers")
 @export var damage_number_scene: PackedScene   # Label3D popup shown when this enemy is hit; null = off
 @export var damage_number_height: float = 5.0  # how far above the enemy (along the surface normal) it appears
@@ -64,6 +70,9 @@ func _ready() -> void:
 		up = Vector3.UP
 	global_position = planet_center + up * radius
 	heading = _project_tangent(heading, up)
+	# difficulty scaling layered on top of the type's stats (1.0 = unchanged)
+	max_health *= maxf(health_mult, 0.0)
+	kill_threshold *= maxf(threshold_mult, 0.0)
 	health = max_health
 	_place_sprite()
 	add_to_group("enemies")   # so enemies can find each other for anti-clump separation

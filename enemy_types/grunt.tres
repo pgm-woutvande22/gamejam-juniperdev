@@ -5,6 +5,6 @@
 [resource]
 script = ExtResource("1")
 type_name = "Grunt"
-kill_threshold = 30.0
-max_health = 30.0
+kill_threshold = 25.0
+max_health = 20.0
 move_speed = 14.0

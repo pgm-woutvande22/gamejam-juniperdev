@@ -1,0 +1,21 @@
+[gd_resource type="Resource" script_class="EnemyType" format=3 uid="uid://c8kqr4n1bcrab"]
+
+[ext_resource type="Script" uid="uid://dqhnf6mict2fr" path="res://scripts/enemy_type.gd" id="1"]
+[ext_resource type="Texture2D" uid="uid://b54ia4hq0xv7a" path="res://assets/KingCrab.png" id="2"]
+
+[resource]
+script = ExtResource("1")
+type_name = "King Crab"
+kill_threshold = 50.0
+max_health = 40.0
+hit_distance = 18.0
+hit_cooldown = 0.5
+score = 5000
+move_speed = 7.0
+turn_speed = 1.2
+chase_range = 250.0
+separation_radius = 0.0
+separation_strength = 0.0
+texture = ExtResource("2")
+pixel_size = 0.12
+sprite_scale = 3.2

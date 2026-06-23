@@ -1,0 +1,9 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(sips -g pixelWidth -g pixelHeight assets/KingCrab.png)",
+      "Bash(timeout 90 /Applications/Godot.app/Contents/MacOS/Godot --headless --editor --quit)",
+      "Bash(/Applications/Godot.app/Contents/MacOS/Godot --headless --check-only --script scripts/boss.gd)"
+    ]
+  }
+}

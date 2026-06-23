@@ -69,6 +69,7 @@ var boss_alive: bool = false                    # a boss is currently on the fie
 @onready var planet: Node3D = get_node_or_null(planet_path)
 
 func _ready() -> void:
+	add_to_group("spawner")   # so the HUD (and others) can find us without a hard-wired path
 	if planet != null:
 		planet_center = planet.global_position
 		var r := _sphere_world_radius(planet)

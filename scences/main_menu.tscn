@@ -1,0 +1,147 @@
+[gd_scene format=3 uid="uid://b8mnmenu0top1"]
+
+[ext_resource type="Script" uid="uid://bqmmsknbq8e3s" path="res://scripts/main_menu.gd" id="1_menu"]
+[ext_resource type="FontFile" uid="uid://ck3242cxis2jn" path="res://assets/fonts/Pixelify_Sans/static/PixelifySans-Bold.ttf" id="2_8v7x5"]
+[ext_resource type="FontFile" uid="uid://bpqao6spkush3" path="res://assets/fonts/Pixelify_Sans/static/PixelifySans-Regular.ttf" id="3_b4yld"]
+[ext_resource type="Shader" uid="uid://b8b58ot4vi24r" path="res://shaders/pixel_planet.gdshader" id="4_pxpl"]
+[ext_resource type="Shader" uid="uid://bm2l4whyugdj7" path="res://shaders/cloud_layer.gdshader" id="5_cloud"]
+[ext_resource type="Shader" uid="uid://dhs2rlp05a6i4" path="res://shaders/space_sky.gdshader" id="6_sky"]
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_sky"]
+shader = ExtResource("6_sky")
+shader_parameter/horizon_color = Color(0.06, 0.05, 0.12, 1)
+shader_parameter/zenith_color = Color(0.02, 0.02, 0.05, 1)
+shader_parameter/star_scale = 220.0
+shader_parameter/star_density = 0.03
+shader_parameter/star_brightness = 1.0
+shader_parameter/star_color = Color(1, 1, 1, 1)
+shader_parameter/twinkle_speed = 1.5
+shader_parameter/sky_rot = Basis(1, 0, 0, 0, 1, 0, 0, 0, 1)
+
+[sub_resource type="Sky" id="Sky_bg"]
+sky_material = SubResource("ShaderMaterial_sky")
+
+[sub_resource type="Environment" id="Environment_bg"]
+background_mode = 2
+sky = SubResource("Sky_bg")
+ambient_light_source = 1
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_planet"]
+render_priority = 0
+shader = ExtResource("4_pxpl")
+shader_parameter/pixel_density = 100.0
+shader_parameter/edge_sharpness = 0.012
+shader_parameter/continent_scale = 1.9
+shader_parameter/sea_level = 0.46
+shader_parameter/warp = 0.45
+shader_parameter/seed = 0.0
+shader_parameter/water0 = Color(0.09, 0.125, 0.22, 1)
+shader_parameter/water1 = Color(0.235, 0.369, 0.545, 1)
+shader_parameter/water2 = Color(0.451, 0.745, 0.827, 1)
+shader_parameter/land0 = Color(0.659, 0.792, 0.345, 1)
+shader_parameter/land1 = Color(0.459, 0.655, 0.263, 1)
+shader_parameter/land2 = Color(0.275, 0.51, 0.196, 1)
+shader_parameter/mtn0 = Color(0.224, 0.29, 0.314, 1)
+shader_parameter/mtn1 = Color(0.341, 0.447, 0.467, 1)
+shader_parameter/mtn2 = Color(0.506, 0.592, 0.588, 1)
+shader_parameter/mtn3 = Color(0.659, 0.71, 0.698, 1)
+shader_parameter/mtn4 = Color(0.78, 0.812, 0.8, 1)
+shader_parameter/mtn5 = Color(0.922, 0.929, 0.914, 1)
+shader_parameter/cloud_shadow_strength = 0.25
+shader_parameter/cloud_shadow_dir = Vector3(1, 0, 0.6)
+shader_parameter/cloud_shadow_offset = 0.08
+shader_parameter/cloud_pixel_density = 100.0
+shader_parameter/cloud_scale = 3.0
+shader_parameter/cloud_coverage = 0.62
+shader_parameter/cloud_softness = 0.06
+shader_parameter/cloud_speed = 0.035
+shader_parameter/cloud_morph_speed = 0.2
+shader_parameter/cloud_morph_amount = 1.0
+
+[sub_resource type="SphereMesh" id="SphereMesh_planet"]
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_clouds"]
+render_priority = 1
+shader = ExtResource("5_cloud")
+shader_parameter/cloud_color = Color(0.922, 0.929, 0.914, 1)
+shader_parameter/pixel_density = 100.0
+shader_parameter/cloud_scale = 3.0
+shader_parameter/coverage = 0.62
+shader_parameter/softness = 0.06
+shader_parameter/opacity = 0.85
+shader_parameter/speed = 0.035
+shader_parameter/morph_speed = 0.2
+shader_parameter/morph_amount = 1.0
+shader_parameter/under_shade = 0.55
+shader_parameter/volume_range = 0.25
+
+[node name="MainMenu" type="Control" unique_id=1898316186]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+script = ExtResource("1_menu")
+crab_count = 15
+crab_scale_min = 0.2
+
+[node name="WorldEnvironment" type="WorldEnvironment" parent="." unique_id=1655899045]
+environment = SubResource("Environment_bg")
+
+[node name="Planet" type="MeshInstance3D" parent="." unique_id=264263078]
+transform = Transform3D(50, 0, 0, 0, 50, 0, 0, 0, 50, 0, 0, 0)
+material_override = SubResource("ShaderMaterial_planet")
+mesh = SubResource("SphereMesh_planet")
+
+[node name="CloudLayer" type="MeshInstance3D" parent="." unique_id=2103659053]
+transform = Transform3D(55.75, 0, 0, 0, 55.75, 0, 0, 0, 55.75, 0, 0, 0)
+material_override = SubResource("ShaderMaterial_clouds")
+mesh = SubResource("SphereMesh_planet")
+
+[node name="Camera3D" type="Camera3D" parent="." unique_id=1878898263]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 6, 90)
+
+[node name="DirectionalLight3D" type="DirectionalLight3D" parent="." unique_id=238284267]
+transform = Transform3D(0.7071068, 0.35355324, -0.6123725, 0, 0.86602557, 0.49999976, 0.7071068, -0.35355324, 0.6123725, 0, 13.953394, 0)
+
+[node name="CrabLayer" type="Node2D" parent="." unique_id=1351006160]
+
+[node name="CenterContainer" type="CenterContainer" parent="." unique_id=1351006161]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="VBoxContainer" type="VBoxContainer" parent="CenterContainer" unique_id=565631816]
+layout_mode = 2
+theme_override_constants/separation = 24
+alignment = 1
+
+[node name="Title" type="Label" parent="CenterContainer/VBoxContainer" unique_id=1838881405]
+layout_mode = 2
+theme_override_colors/font_outline_color = Color(0, 0, 0, 1)
+theme_override_constants/outline_size = 17
+theme_override_constants/shadow_outline_size = 4
+theme_override_fonts/font = ExtResource("2_8v7x5")
+theme_override_font_sizes/font_size = 96
+text = "CRAB CRACKER"
+horizontal_alignment = 1
+
+[node name="PlayButton" type="Button" parent="CenterContainer/VBoxContainer" unique_id=1372750587]
+custom_minimum_size = Vector2(320, 72)
+layout_mode = 2
+size_flags_horizontal = 4
+theme_override_fonts/font = ExtResource("3_b4yld")
+theme_override_font_sizes/font_size = 36
+text = "Play"
+
+[node name="QuitButton" type="Button" parent="CenterContainer/VBoxContainer" unique_id=708595521]
+custom_minimum_size = Vector2(320, 72)
+layout_mode = 2
+size_flags_horizontal = 4
+theme_override_fonts/font = ExtResource("3_b4yld")
+theme_override_font_sizes/font_size = 36
+text = "Quit"

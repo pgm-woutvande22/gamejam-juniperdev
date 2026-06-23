@@ -11,7 +11,7 @@ config_version=5
 [application]
 
 config/name="seriousgame"
-run/main_scene="uid://bijewbw3cmiha"
+run/main_scene="uid://b8mnmenu0top1"
 config/features=PackedStringArray("4.7", "Forward Plus")
 config/icon="res://icon.svg"
 

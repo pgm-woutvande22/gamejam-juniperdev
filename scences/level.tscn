@@ -14,6 +14,7 @@
 [ext_resource type="Shader" uid="uid://bm2l4whyugdj7" path="res://shaders/cloud_layer.gdshader" id="13_cloud"]
 [ext_resource type="Shader" uid="uid://dhs2rlp05a6i4" path="res://shaders/space_sky.gdshader" id="14_sky"]
 [ext_resource type="Script" uid="uid://cseppau2e1ikb" path="res://scripts/sky_parallax.gd" id="15_skyp"]
+[ext_resource type="PackedScene" uid="uid://cvydbxdm3krw4" path="res://scences/pause_menu.tscn" id="16_pause"]
 
 [sub_resource type="ShaderMaterial" id="ShaderMaterial_sky"]
 shader = ExtResource("14_sky")
@@ -230,3 +231,5 @@ mesh = SubResource("SphereMesh_0k001")
 [node name="Spawner" parent="." unique_id=1257519610 instance=ExtResource("6_3irxl")]
 enemy_scene = ExtResource("5_cq5gf")
 enemy_types = Array[ExtResource("7_2mwew")]([ExtResource("8_gmcrc"), ExtResource("9_nskur"), ExtResource("10_olo2r")])
+
+[node name="PauseMenu" parent="." instance=ExtResource("16_pause")]

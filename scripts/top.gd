@@ -45,6 +45,7 @@ var prev_rmb: bool = false                   # last frame's right-mouse state, f
 @export var alive: bool = true
 @export var lifesteal: int = 30
 @export var AfterImageEmitter:GPUParticles3D
+@export var warmup_particles: bool = true   # pre-compile the dash + after-image shaders at spawn so the first dash doesn't hitch
 
 func _ready() -> void:
 	var planet := get_node(planet_path)
@@ -64,6 +65,8 @@ func _ready() -> void:
 	_setup_dash_colors()
 	_update_camera(up)
 	_update_light(up)
+	if warmup_particles:
+		_warmup_particles()
 	_spin_decay()
 
 func _physics_process(delta: float) -> void:
@@ -206,6 +209,26 @@ func _set_trail(on: bool) -> void:
 	# put as the top moves away, forming a trail rather than a clump on the player
 	if dash_particles != null and dash_particles.emitting != on:
 		dash_particles.emitting = on
+
+func _warmup_particles() -> void:
+	# Shader compilation is lazy: Godot only compiles a particle system's material the first time
+	# it's actually DRAWN -> normally on the first dash, which stutters. Force that compile now by
+	# emitting a one-frame burst from BOTH the dash trail and the after-image at spawn, then clear
+	# them so no dust lingers (reads as a tiny spawn poof at worst).
+	var emitters: Array[GPUParticles3D] = []
+	if dash_particles != null:
+		emitters.append(dash_particles)
+	if AfterImageEmitter != null:
+		emitters.append(AfterImageEmitter)
+	if emitters.is_empty():
+		return
+	for e in emitters:
+		e.emitting = true
+	await get_tree().process_frame   # let them render a frame so the GPU compiles the shaders
+	await get_tree().process_frame
+	for e in emitters:
+		e.restart()                  # wipe the warm-up burst so no particles linger
+		e.emitting = false           # ...and stop (restart() re-enables emitting in Godot 4)
 
 func _start_dash(up: Vector3) -> void:
 	# pick the tangent direction to dash in: toward the cursor if it's over the planet,

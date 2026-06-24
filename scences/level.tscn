@@ -175,6 +175,7 @@ move_speed = 30.0
 accel_speed = 50.0
 friction = 1.0
 bounce_strength = 1.0
+spin_visual_speed = 500.0
 dash_distance = 20.0
 dash_duration = 0.2
 dash_cooldown = 2.0
@@ -183,6 +184,7 @@ dash_colors = Array[Color]([Color(1, 0.96862745, 0, 1), Color(1, 1, 1, 1), Color
 dash_indicator_path = NodePath("DashIndicator")
 camera_distance = 35.0
 camera_pitch_deg = 89.0
+lifesteal = 20
 AfterImageEmitter = NodePath("AfterImageParticle")
 
 [node name="Camera3D" type="Camera3D" parent="Top" unique_id=1564292906]
@@ -242,6 +244,7 @@ enemy_health_growth = 1.3
 
 [node name="WaveHUD" parent="." unique_id=1922402079 instance=ExtResource("18_hud")]
 
-[node name="BeyStats" parent="." unique_id=954660751 node_paths=PackedStringArray("bey") instance=ExtResource("18_bg8nh")]
+[node name="BeyStatsHUD" parent="." unique_id=954660751 node_paths=PackedStringArray("bey", "spawner") instance=ExtResource("18_bg8nh")]
 script = ExtResource("19_jodta")
 bey = NodePath("../Top")
+spawner = NodePath("../Spawner")

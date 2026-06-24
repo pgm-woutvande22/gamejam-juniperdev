@@ -6,6 +6,9 @@ font_size = 35
 [sub_resource type="LabelSettings" id="LabelSettings_ygwbq"]
 font_size = 35
 
+[sub_resource type="LabelSettings" id="LabelSettings_bg8nh"]
+font_size = 45
+
 [node name="BeyStats" type="CanvasLayer" unique_id=954660751]
 
 [node name="RPM" type="Label" parent="." unique_id=1490159776]
@@ -25,5 +28,15 @@ offset_right = 1888.0
 offset_bottom = 993.0
 text = "Speed:"
 label_settings = SubResource("LabelSettings_ygwbq")
+horizontal_alignment = 2
+vertical_alignment = 1
+
+[node name="Score" type="Label" parent="." unique_id=875155583]
+offset_left = 1280.0
+offset_top = 32.0
+offset_right = 1888.0
+offset_bottom = 95.0
+text = "Score: "
+label_settings = SubResource("LabelSettings_bg8nh")
 horizontal_alignment = 2
 vertical_alignment = 1
